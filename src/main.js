@@ -6,13 +6,13 @@ import {
   RenderPosition
 } from './render.js';
 
-import TripEventsPresenter from './presenter/trip-events-presenter.js';
-import TripMessagesPresenter from './presenter/trip-message-presenter.js';
+import TripPointsPresenter from './presenter/trip-points-presenter.js';
+import PointsModel from './model/point-model.js';
 
 
 const siteMainElement = document.querySelector('.page-main');
 const siteHeaderMainElement = document.querySelector('.trip-main');
-const siteTripEventsElement = siteMainElement.querySelector('.trip-events');
+const siteTripPointsElement = siteMainElement.querySelector('.trip-events');
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls__filters');
@@ -21,8 +21,8 @@ const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls_
 render(new FilterView(), siteTripControlsFilters, RenderPosition.BEFOREEND);
 
 
-const tripEventsPresenter = new TripEventsPresenter();
-const tripMessagesPresenter = new TripMessagesPresenter();
+const tripPointsPresenter = new TripPointsPresenter();
+// const tripMessagesPresenter = new TripMessagesPresenter();
+const pointsModel = new PointsModel();
 
-tripEventsPresenter.init(siteTripEventsElement, siteHeaderMainElement);
-tripMessagesPresenter.init(siteTripEventsElement);
+tripPointsPresenter.init(siteTripPointsElement, siteHeaderMainElement, pointsModel);

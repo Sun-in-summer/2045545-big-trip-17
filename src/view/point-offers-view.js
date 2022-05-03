@@ -2,7 +2,16 @@ import {
   createElement
 } from '../render.js';
 
-const createEventOffersTemplate = () => (`<section class="event__section  event__section--offers">
+const createPointOffersTemplate = (point = {}) => {
+  const {
+    basePrice = '987',
+    dateFrom = '2022-07-10T10:55:56.845Z',
+    dateTo = '2022-07-12T10:56:13.375Z',
+    destination = 'Amsterdam',
+    offers = [1, 2, 3],
+    type = 'flight'
+  } = point;
+  return (`<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
@@ -52,11 +61,12 @@ const createEventOffersTemplate = () => (`<section class="event__section  event_
                       </div>
                     </div>
                   </section>`);
+};
 
 
-export default class EventOffersView {
+export default class PointOffersView {
   getTemplate() {
-    return createEventOffersTemplate();
+    return createPointOffersTemplate();
   }
 
   getElement() {
