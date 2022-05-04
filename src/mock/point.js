@@ -1,6 +1,7 @@
 import {
-  getRandomInteger, generateDateTime, generateNextDate
+  getRandomInteger, generateDateTime, generateNextDate, getOffers
 } from '../utils.js';
+import { OFFERS } from '../const.js';
 
 const RANDOM_POINTS_QUANTITY = 10;
 const MIN_PRICE = 10;
@@ -27,6 +28,7 @@ const generatePointType = () => {
 
 export const generatePoint = () => {
   const startDate =generateDateTime();
+  const settedType=generatePointType();
   return {
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom: startDate,
@@ -34,23 +36,7 @@ export const generatePoint = () => {
     destination: generateDestination(),
     id: getRandomInteger(0, RANDOM_POINTS_QUANTITY),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    offers: Array.from({
-      length: 3
-    }, getRandomInteger),
-    type: generatePointType(),
+    offers: getOffers(settedType, OFFERS),
+    type: settedType,
   };
-};
-
-
-const offer = {
-  'type': 'taxi',
-  'offers': [{
-    'id': 1,
-    'title': 'Upgrade to a business class',
-    'price': 120
-  }, {
-    'id': 2,
-    'title': 'Choose the radio station',
-    'price': 60
-  }]
 };

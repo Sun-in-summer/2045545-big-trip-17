@@ -11,7 +11,6 @@ const createPointCreationFormTemplate = (point = {}) => {
     dateFrom = '2022-07-10T10:55:56.845Z',
     dateTo = '2022-07-12T10:56:13.375Z',
     destination = 'Amsterdam',
-    offers = [1, 2, 3],
     type = 'flight'
   } = point;
 
@@ -25,7 +24,7 @@ const createPointCreationFormTemplate = (point = {}) => {
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 

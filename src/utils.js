@@ -68,6 +68,11 @@ const generateDateTime = () => {
 
 const convertToDatetimeFormat =(date) => dayjs(date).format('YYYY-MM-DD');
 
+const getOffers =(chosenType, arr)=> {
+  const offers = arr.filter((offer)=> offer.type === chosenType);
+  const foundOffers = Object.values(offers[0].offers);
+  return  foundOffers;
+};
 
 export {
   getRandomInteger,
@@ -79,6 +84,7 @@ export {
   createRandomUrl,
   generateDateTime,
   generateNextDate,
-  convertToDatetimeFormat
+  convertToDatetimeFormat,
+  getOffers
 };
 

@@ -30,7 +30,7 @@ const DestinationPhotos =[
   }
 ];
 
-const OFFER_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+// const OFFER_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const OFFERS = [
   {
@@ -92,6 +92,11 @@ const OFFERS = [
         'title': 'Switch to comfort class',
         'price': 30
       },
+      {
+        'id': 4,
+        'title': 'Order Uber',
+        'price': 20
+      }
     ]
   },
   {
@@ -143,8 +148,10 @@ const OFFERS = [
   },
   {
     'type': 'restaurant',
-    'offers': [ ]
+    'offers': [
+    ]
   },
 ];
+
 
 export {DestinationDescriptions, DestinationPhotos, OFFERS};

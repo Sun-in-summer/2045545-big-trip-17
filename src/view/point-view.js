@@ -15,9 +15,9 @@ const createPointTemplate = (point) => {
     isFavorite,
     type,
     dateFrom,
-    dateTo
+    dateTo,
+    offers
   } = point;
-
 
   const startDate = dateFrom !== null ?
     humanizePointDate(dateFrom) :
@@ -40,6 +40,9 @@ const createPointTemplate = (point) => {
     'event__favorite-btn--active' :
     '';
 
+  const firstOfferTitle = offers.length !== 0 ? offers[0].title : '';
+  const firstOfferPrice = offers.length !== 0 ? offers[0].price : '';
+
   return (`<div class="event">
                 <time class="event__date" datetime=${convertedToDatetimeDateFrom}>${startDate}</time>
                 <div class="event__type">
@@ -60,9 +63,9 @@ const createPointTemplate = (point) => {
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
                   <li class="event__offer">
-                    <span class="event__offer-title">Order Uber</span>
+                    <span class="event__offer-title">${firstOfferTitle}</span>
                     +€&nbsp;
-                    <span class="event__offer-price">20</span>
+                    <span class="event__offer-price">${firstOfferPrice}</span>
                   </li>
                 </ul>
                 <button class = "event__favorite-btn ${favoriteClassName}"
