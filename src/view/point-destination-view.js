@@ -21,7 +21,7 @@ const createPointDestinationTemplate = (point = {}) => {
     }
     else {
       for (let i =0 ; i< pickedPhotos.length; i++){
-        photoWays = photoWays +`<img class="event__photo" src=${pickedPhotos[i]} alt="Event photo">`;
+        photoWays +=  `<img class="event__photo" src=${pickedPhotos[i]} alt="Event photo">`;
       }
     }
     return photoWays;
