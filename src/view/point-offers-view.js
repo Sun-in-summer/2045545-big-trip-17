@@ -9,15 +9,15 @@ const createPointOffersTemplate = (point = {}) => {
   } = point;
 
   const createOffersItems = (providedOffers) =>{
-    for (let i = 0; i < providedOffers.length; i++){
+    for (const providedOffer of  providedOffers){
       let checkOption = Boolean(getRandomInteger(0, 1));
-      if (checkOption === true ){
+      if (checkOption){
         checkOption ='checked';
       }
       else {
         checkOption ='unchecked';
       }
-      providedOffers[i].check = checkOption;
+      providedOffer.check = checkOption;
     }
     return providedOffers.map((item) =>`<div class="event__offer-selector">
                 <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${item.check}>
@@ -26,7 +26,7 @@ const createPointOffersTemplate = (point = {}) => {
                   +€&nbsp;
                   <span class="event__offer-price">${item.price}</span>
                 </label>
-              </div>`).join();
+              </div>`).join('');
   };
 
   const offersItems =createOffersItems(offers);

@@ -2,7 +2,8 @@ import {
   createElement
 } from '../render.js';
 import {  pickPhotos } from '../utils.js';
-import { DestinationDescriptions, DestinationPhotos } from '../const.js';
+import { DestinationDescriptions } from '../const.js';
+import {DestinationPhotos} from '../mock/point.js';
 
 
 const createPointDestinationTemplate = (point = {}) => {
@@ -20,8 +21,8 @@ const createPointDestinationTemplate = (point = {}) => {
       return photoWays;
     }
     else {
-      for (let i =0 ; i< pickedPhotos.length; i++){
-        photoWays +=  `<img class="event__photo" src=${pickedPhotos[i]} alt="Event photo">`;
+      for (const pickedPhoto of pickedPhotos){
+        photoWays +=  `<img class="event__photo" src=${pickedPhoto} alt="Event photo">`;
       }
     }
     return photoWays;

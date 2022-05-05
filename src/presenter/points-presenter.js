@@ -6,7 +6,7 @@ import PointCreationFormView from '../view/create-point-form-view.js';
 import PointDetailsView from '../view/point-details-view.js';
 import PointOffersView from '../view/point-offers-view.js';
 import PointDestinationView from '../view/point-destination-view.js';
-import TripInfoView from '../view/trip-info-view.js';
+import TripInfoView from '../view/info-view.js';
 import {
   render
 } from '../render.js';
@@ -15,7 +15,7 @@ import {
 } from '../render.js';
 
 
-export default class pointsPresenter {
+export default class PointsPresenter {
   sortComponent = new SortView();
   pointsListComponent = new PointsListView();
   pointListItem = new PointListItemView();
@@ -37,11 +37,10 @@ export default class pointsPresenter {
     render(new PointOffersView(this.points[0]), this.pointDetailsComponent.getElement());
     render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
 
-
-    for (let i = 1; i < this.points.length; i++) {
-      this.pointListPosition = new PointListItemView(this.points[i]);
+    for (const thispoint of this.points) {
+      this.pointListPosition = new PointListItemView(thispoint);
       render(this.pointListPosition, this.pointsListComponent.getElement());
-      render(new PointView(this.points[i]), this.pointListPosition.getElement());
+      render(new PointView(thispoint), this.pointListPosition.getElement());
     }
 
     render(new TripInfoView(), headerContainer, RenderPosition.AFTERBEGIN);

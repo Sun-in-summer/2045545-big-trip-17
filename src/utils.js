@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Duration from 'dayjs/plugin/duration';
 dayjs.extend(Duration);
-const SOME_NUMBER =300;
 
 
 const getRandomInteger = (a = 0, b = 1) => {
@@ -13,7 +12,14 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const humanizePointDate = (date) => dayjs(date).format('MMM D');
 
-const pickHoursMinutesFromDate = (date) => dayjs(date).format('HH:mm');
+const pickHoursMinutesFromDate = (date) => {
+  if (date === null) {
+    return  dayjs().format('HH:mm');
+  }
+  else {
+    return dayjs(date).format('HH:mm');
+  }
+};
 
 const countDuration = (dateTo, dateFrom) => {
   const date1 = dayjs(dateTo);
@@ -50,11 +56,6 @@ const pickPhotos = (DestinationPhotos ,destionationForPhoto) => {
 };
 
 
-const createRandomUrl = () => {
-  const randomUrl =`http://picsum.photos/248/152?r${getRandomInteger(0, SOME_NUMBER)}`;
-  return randomUrl;
-};
-
 const generateNextDate =(date) =>{
   const maxMinutsGap = 7*24*60;
   const minutesGap = getRandomInteger(0, maxMinutsGap);
@@ -81,7 +82,6 @@ export {
   countDuration,
   formatToDateAndTime,
   pickPhotos,
-  createRandomUrl,
   generateDateTime,
   generateNextDate,
   convertToDatetimeFormat,

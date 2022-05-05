@@ -5,18 +5,19 @@ import {
   formatToDateAndTime
 } from '../utils.js';
 
-const createPointCreationFormTemplate = (point = {}) => {
-  const {
-    basePrice = '987',
-    dateFrom = '2022-07-10T10:55:56.845Z',
-    dateTo = '2022-07-12T10:56:13.375Z',
-    destination = 'Amsterdam',
-    type = 'flight'
-  } = point;
 
+const defaultPoint = {
+  basePrice: '987',
+  dateFrom:'2022-07-10T10:55:56.845Z',
+  dateTo: '2022-07-12T10:56:13.375Z',
+  destination: 'Amsterdam',
+  type:'flight'
+};
 
-  const formattedDateFrom = formatToDateAndTime(dateFrom);
-  const formattedDateTo = formatToDateAndTime(dateTo);
+const createPointCreationFormTemplate = (point = defaultPoint) => {
+
+  const formattedDateFrom = formatToDateAndTime(point.dateFrom);
+  const formattedDateTo = formatToDateAndTime(point.dateTo);
 
 
   return (`<form class="event event--edit" action="#" method="post">
@@ -24,7 +25,7 @@ const createPointCreationFormTemplate = (point = {}) => {
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -82,9 +83,9 @@ const createPointCreationFormTemplate = (point = {}) => {
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      ${type}
+                      ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       <option value="Amsterdam"></option>
                       <option value="Geneva"></option>
@@ -109,14 +110,13 @@ const createPointCreationFormTemplate = (point = {}) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>
                 </header></form>`);
 };
-
 
 export default class PointCreationFormView {
   constructor(point) {

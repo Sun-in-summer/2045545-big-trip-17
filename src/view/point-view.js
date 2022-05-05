@@ -23,13 +23,8 @@ const createPointTemplate = (point) => {
     humanizePointDate(dateFrom) :
     '';
 
-  const startTime = dateFrom !== null ?
-    pickHoursMinutesFromDate(dateFrom) :
-    '';
-
-  const endTime = dateTo !== null ?
-    pickHoursMinutesFromDate(dateTo) :
-    '';
+  const startTime = pickHoursMinutesFromDate(dateFrom);
+  const endTime = pickHoursMinutesFromDate(dateTo);
 
   const convertedToDatetimeDateFrom=convertToDatetimeFormat(dateFrom);
   const convertedToDatetimeDateTo=convertToDatetimeFormat(dateTo);

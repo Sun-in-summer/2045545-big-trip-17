@@ -6,8 +6,23 @@ import { OFFERS } from '../const.js';
 const RANDOM_POINTS_QUANTITY = 10;
 const MIN_PRICE = 10;
 const MAX_PRICE = 3000;
+const SOME_NUMBER =300;
+const DESTINATION_PHOTO_QUANTITY=5;
 
 const POINT_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+
+// const PointType = {
+//   Taxi: 'taxi',
+//   Bus: 'bus',
+//   Train: 'train',
+//   Ship: 'ship',
+//   Drive: 'drive',
+//   Flight: 'flight',
+//   Checkin: 'check-in',
+//   Sightseeing:'sightseeing',
+//   Restaurant: 'restaurant'
+// };
 
 const generateDestination = () => {
   const destinations = [
@@ -26,6 +41,31 @@ const generatePointType = () => {
   return POINT_TYPE[randomIndex];
 };
 
+const createRandomUrl = () => {
+  const randomUrl =`http://picsum.photos/248/152?r${getRandomInteger(0, SOME_NUMBER)}`;
+  return randomUrl;
+};
+
+const DestinationPhotos =[
+  {
+    destination: 'Moscow',
+    photos:  Array.from({length: DESTINATION_PHOTO_QUANTITY}, createRandomUrl),
+  },
+  {
+    destination: 'Beijing',
+    photos:  Array.from({length: DESTINATION_PHOTO_QUANTITY}, createRandomUrl),
+  },
+  {
+    destination: 'Geneva',
+    photos:  Array.from({length: DESTINATION_PHOTO_QUANTITY}, createRandomUrl),
+  },
+  {
+    destination: 'Amsterdam',
+    photos:  Array.from({length: DESTINATION_PHOTO_QUANTITY}, createRandomUrl),
+  }
+];
+
+
 export const generatePoint = () => {
   const startDate =generateDateTime();
   const settedType=generatePointType();
@@ -40,3 +80,6 @@ export const generatePoint = () => {
     type: settedType,
   };
 };
+
+export {DestinationPhotos};
+
