@@ -10,13 +10,13 @@ import {
 //   FUTURE: 'There no future events now',
 // };
 
-const createTripMessageTemplate = () => (
-  `<p class="trip-events__msg">Click New Event to create your first point</p>`
+const createMessageTemplate = () => (
+  '<p class="trip-events__msg">Click New Event to create your first point</p>'
 );
 
-export default class TripMessageView {
+export default class MessageView {
   getTemplate() {
-    return createTripMessageTemplate();
+    return createMessageTemplate();
   }
 
   getElement() {

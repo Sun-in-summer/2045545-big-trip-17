@@ -1,0 +1,17 @@
+GET https://17.ecmascript.pages.academy/big-trip/points
+Authorization: Basic er883jdzbdw
+###
+GET https://17.ecmascript.pages.academy/big-trip/points
+Authorization: Basic ngirjgper76
+###
+GET https://17.ecmascript.pages.academy/big-trip/offers
+Authorization: Basic ngirjgpe125
+###
+GET https://17.ecmascript.pages.academy/big-trip/points
+Authorization: Basic ngirjgper76
+###
+
+GET https://17.ecmascript.pages.academy/big-trip/offers
+Authorization: Basic ngirjgpe125
+
+
