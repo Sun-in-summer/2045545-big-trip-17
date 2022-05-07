@@ -6,7 +6,7 @@ import PointCreationFormView from '../view/create-point-form-view.js';
 import PointDetailsView from '../view/point-details-view.js';
 import PointOffersView from '../view/point-offers-view.js';
 import PointDestinationView from '../view/point-destination-view.js';
-import TripInfoView from '../view/info-view.js';
+import InfoView from '../view/info-view.js';
 import {
   render
 } from '../render.js';
@@ -16,16 +16,18 @@ import {
 
 
 export default class PointsPresenter {
-  sortComponent = new SortView();
-  pointsListComponent = new PointsListView();
-  pointListItem = new PointListItemView();
-  pointCreationFormComponent = new PointCreationFormView();
-  pointDetailsComponent = new PointDetailsView();
-
-
-  init = (pointsContainer, headerContainer, pointsModel) => {
+  constructor(pointsContainer, headerContainer) {
     this.pointsContainer = pointsContainer;
     this.headerContainer = headerContainer;
+    this.sortComponent = new SortView();
+    this.pointsListComponent = new PointsListView();
+    this.pointListItem = new PointListItemView();
+    this.pointCreationFormComponent = new PointCreationFormView();
+    this.pointDetailsComponent = new PointDetailsView();
+  }
+
+
+  init = (pointsModel) => {
     this.pointsModel = pointsModel;
     this.points = [...this.pointsModel.getPoints()];
     this.firstPointCreationFormComponent = new PointCreationFormView(this.points[0]);
@@ -34,15 +36,15 @@ export default class PointsPresenter {
     render(this.pointListItem, this.pointsListComponent.getElement());
     render(this.firstPointCreationFormComponent, this.pointListItem.getElement());
     render(this.pointDetailsComponent, this.firstPointCreationFormComponent.getElement());
-    render(new PointOffersView(this.points[0]), this.pointDetailsComponent.getElement());
+    render(new PointOffersView(this.points[0].offers), this.pointDetailsComponent.getElement());
     render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
 
-    for (const thispoint of this.points) {
-      this.pointListPosition = new PointListItemView(thispoint);
+    for (let i = 1 ; i <this.points.length; i++) {// здесь  for , а не for of  потому что иначе  снова отражается первый элемент из поинтов
+      this.pointListPosition = new PointListItemView(this.points[i]);
       render(this.pointListPosition, this.pointsListComponent.getElement());
-      render(new PointView(thispoint), this.pointListPosition.getElement());
+      render(new PointView(this.points[i]), this.pointListPosition.getElement());
     }
 
-    render(new TripInfoView(), headerContainer, RenderPosition.AFTERBEGIN);
+    render(new InfoView(), this.headerContainer, RenderPosition.AFTERBEGIN);
   };
 }

@@ -3,15 +3,12 @@ import {
 } from '../render.js';
 import { getRandomInteger } from '../utils.js';
 
-const createPointOffersTemplate = (point = {}) => {
-  const {
-    offers = [],
-  } = point;
+const createPointOffersTemplate = (offers = []) => {
 
   const createOffersItems = (providedOffers) =>{
-    for (const providedOffer of  providedOffers){
+    for (const providedOffer of providedOffers){
       let checkOption = Boolean(getRandomInteger(0, 1));
-      if (checkOption){
+      if (checkOption === true ){
         checkOption ='checked';
       }
       else {
@@ -26,7 +23,7 @@ const createPointOffersTemplate = (point = {}) => {
                   +€&nbsp;
                   <span class="event__offer-price">${item.price}</span>
                 </label>
-              </div>`).join('');
+              </div>`).join();
   };
 
   const offersItems =createOffersItems(offers);
@@ -49,12 +46,12 @@ const createPointOffersTemplate = (point = {}) => {
 
 
 export default class PointOffersView {
-  constructor(point) {
-    this.point = point;
+  constructor(offers) {
+    this.offers = offers;
   }
 
   getTemplate() {
-    return createPointOffersTemplate(this.point);
+    return createPointOffersTemplate(this.offers);
   }
 
   getElement() {

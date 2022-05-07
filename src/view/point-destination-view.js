@@ -1,9 +1,8 @@
 import {
   createElement
 } from '../render.js';
-import {  pickPhotos } from '../utils.js';
-import { DestinationDescriptions } from '../const.js';
-import {DestinationPhotos} from '../mock/point.js';
+import {pickPhotos} from '../utils.js';
+import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 
 
 const createPointDestinationTemplate = (point = {}) => {
