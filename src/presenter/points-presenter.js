@@ -36,7 +36,7 @@ export default class PointsPresenter {
     render(this.pointListItem, this.pointsListComponent.getElement());
     render(this.firstPointCreationFormComponent, this.pointListItem.getElement());
     render(this.pointDetailsComponent, this.firstPointCreationFormComponent.getElement());
-    render(new PointOffersView(this.points[0].offers), this.pointDetailsComponent.getElement());
+    render(new PointOffersView(this.points[0]), this.pointDetailsComponent.getElement());
     render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
 
     for (let i = 1 ; i <this.points.length; i++) {// здесь  for , а не for of  потому что иначе  снова отражается первый элемент из поинтов

@@ -1,32 +1,29 @@
 import {
   createElement
 } from '../render.js';
-import { getRandomInteger } from '../utils.js';
+import { OFFERS } from '../mock/offers.js';
+import { getAvailableOffers } from '../mock/point.js';
 
-const createPointOffersTemplate = (offers = []) => {
+const createPointOffersTemplate = (point={}) => {
+  const {type, offers =[]} =point;
 
-  const createOffersItems = (providedOffers) =>{
-    for (const providedOffer of providedOffers){
-      let checkOption = Boolean(getRandomInteger(0, 1));
-      if (checkOption === true ){
-        checkOption ='checked';
-      }
-      else {
-        checkOption ='unchecked';
-      }
-      providedOffer.check = checkOption;
-    }
-    return providedOffers.map((item) =>`<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${item.check}>
+  const availableOffers = getAvailableOffers(type, OFFERS);
+
+
+  const createOffersItems = (someOffers) =>someOffers.map((item) =>`<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" checked=''>
                 <label class="event__offer-label" for="event-offer-${item.id}-1">
                   <span class="event__offer-title">${item.title}</span>
                   +€&nbsp;
                   <span class="event__offer-price">${item.price}</span>
                 </label>
-              </div>`).join();
-  };
+              </div>`).join(' ');
 
-  const offersItems =createOffersItems(offers);
+
+  let offersItems = '';
+  if (availableOffers.length > 0) {
+    offersItems = createOffersItems(availableOffers);
+  }
 
   let offersContainer ='<div></div>';
 
@@ -46,12 +43,12 @@ const createPointOffersTemplate = (offers = []) => {
 
 
 export default class PointOffersView {
-  constructor(offers) {
-    this.offers = offers;
+  constructor(point) {
+    this.point = point;
   }
 
   getTemplate() {
-    return createPointOffersTemplate(this.offers);
+    return createPointOffersTemplate(this.point);
   }
 
   getElement() {

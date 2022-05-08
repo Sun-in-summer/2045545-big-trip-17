@@ -35,8 +35,8 @@ const createPointTemplate = (point) => {
     'event__favorite-btn--active' :
     '';
 
-  const firstOfferTitle = offers.length !== 0 ? offers[0].title : '';
-  const firstOfferPrice = offers.length !== 0 ? offers[0].price : '';
+  // const firstOfferTitle = offers.length !== 0 ? offers[0].title : '';
+  // const firstOfferPrice = offers.length !== 0 ? offers[0].price : '';
 
   return (`<div class="event">
                 <time class="event__date" datetime=${convertedToDatetimeDateFrom}>${startDate}</time>
@@ -58,9 +58,9 @@ const createPointTemplate = (point) => {
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
                   <li class="event__offer">
-                    <span class="event__offer-title">${firstOfferTitle}</span>
+                    <span class="event__offer-title">_____firstOfferTitle________</span>
                     +€&nbsp;
-                    <span class="event__offer-price">${firstOfferPrice}</span>
+                    <span class="event__offer-price">_____firstOfferPrice______</span>
                   </li>
                 </ul>
                 <button class = "event__favorite-btn ${favoriteClassName}"
