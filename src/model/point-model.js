@@ -1,4 +1,4 @@
-export default class PointsModel {
+export default class PointModel {
   constructor(points, allOffers) {
     this.points = points;
     this.allOffers=allOffers;

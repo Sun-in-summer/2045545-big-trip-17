@@ -1,5 +1,5 @@
 import {
-  getRandomInteger, generateDateTime, generateNextDate
+  getRandomInteger, generateDateTime, generateNextDate, getAvailableOffers
 } from '../utils.js';
 import { OFFERS } from './offers.js';
 
@@ -74,12 +74,7 @@ const DestinationPhotos =[
   }
 ];
 
-const getAvailableOffers =(chosenType, arr)=> {
-  const offers = arr.find((offer)=> offer.type === chosenType);
-  const availableOffers = Object.values(offers.offers);
 
-  return  availableOffers;
-};
 
 const getPointOffers =(availableOffers)=>{
   const foundOffers =[];

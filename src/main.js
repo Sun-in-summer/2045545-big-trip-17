@@ -7,7 +7,7 @@ import {
 } from './render.js';
 
 import PointsPresenter from './presenter/points-presenter.js';
-import PointsModel from './model/point-model.js';
+import PointModel from './model/point-model.js';
 import { generatePoints } from './mock/point.js';
 import { OFFERS } from './mock/offers.js';
 
@@ -24,7 +24,8 @@ render(new FilterView(), siteTripControlsFilters, RenderPosition.BEFOREEND);
 
 const points = generatePoints();
 const allOffers =OFFERS.slice();
-const pointsModel = new PointsModel(points, allOffers);
-new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointsModel);
+
+const pointModel = new PointModel(points, allOffers);
+new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointModel);
 
 

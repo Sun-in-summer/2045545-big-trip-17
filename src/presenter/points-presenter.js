@@ -2,7 +2,7 @@ import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
 import PointListItemView from '../view/point-list-item-view.js';
-import PointCreationFormView from '../view/create-point-form-view.js';
+import PointEditFormView from '../view/point-edit-form-view.js';
 import PointDetailsView from '../view/point-details-view.js';
 import PointOffersView from '../view/point-offers-view.js';
 import PointDestinationView from '../view/point-destination-view.js';
@@ -22,21 +22,22 @@ export default class PointsPresenter {
     this.sortComponent = new SortView();
     this.pointsListComponent = new PointsListView();
     this.pointListItem = new PointListItemView();
-    this.pointCreationFormComponent = new PointCreationFormView();
+    this.pointCreationFormComponent = new PointEditFormView();
     this.pointDetailsComponent = new PointDetailsView();
   }
 
 
-  init = (pointsModel) => {
-    this.pointsModel = pointsModel;
-    this.points = [...this.pointsModel.getPoints()];
-    this.firstPointCreationFormComponent = new PointCreationFormView(this.points[0]);
-    this.allOffers = [...this.pointsModel.getOffers()];
+  init = (pointModel) => {
+    this.pointModel = pointModel;
+    this.points = [...this.pointModel.getPoints()];
+    this.pointEditFormComponent = new PointEditFormView(this.points[0]);
+    this.allOffers = [...this.pointModel.getOffers()];
+
     render(this.sortComponent, this.pointsContainer);
     render(this.pointsListComponent, this.pointsContainer);
     render(this.pointListItem, this.pointsListComponent.getElement());
-    render(this.firstPointCreationFormComponent, this.pointListItem.getElement());
-    render(this.pointDetailsComponent, this.firstPointCreationFormComponent.getElement());
+    render(this.pointEditFormComponent, this.pointListItem.getElement());
+    render(this.pointDetailsComponent, this.pointEditFormComponent.getElement());
     render(new PointOffersView(this.points[0], this.allOffers), this.pointDetailsComponent.getElement());
     render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
 

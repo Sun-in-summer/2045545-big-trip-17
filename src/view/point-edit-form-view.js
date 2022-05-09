@@ -14,7 +14,7 @@ const defaultPoint = {
   type:'flight'
 };
 
-const createPointCreationFormTemplate = (point = defaultPoint) => {
+const createPointEditFormTemplate = (point = defaultPoint) => {
 
   const formattedDateFrom = formatToDateAndTime(point.dateFrom);
   const formattedDateTo = formatToDateAndTime(point.dateTo);
@@ -118,13 +118,13 @@ const createPointCreationFormTemplate = (point = defaultPoint) => {
                 </header></form>`);
 };
 
-export default class PointCreationFormView {
+export default class PointEditFormView {
   constructor(point) {
     this.point = point;
   }
 
   getTemplate() {
-    return createPointCreationFormTemplate(this.point);
+    return createPointEditFormTemplate(this.point);
   }
 
   getElement() {

@@ -1,7 +1,8 @@
 import {
   createElement
 } from '../render.js';
-import { getAvailableOffers } from '../mock/point.js';
+import { getAvailableOffers } from '../utils.js';
+
 
 const createPointOffersTemplate = (point={}, allOffers ) => {
   const {type, offers =[]} =point;
@@ -42,13 +43,13 @@ const createPointOffersTemplate = (point={}, allOffers ) => {
 
 
 export default class PointOffersView {
-  constructor(point, allOffers) {
+  constructor(point, foundOffers) {
     this.point = point;
-    this.allOffers =allOffers;
+    this.foundOffers =foundOffers;
   }
 
   getTemplate() {
-    return createPointOffersTemplate(this.point, this.allOffers);
+    return createPointOffersTemplate(this.point, this.foundOffers);
   }
 
   getElement() {
