@@ -75,8 +75,8 @@ const DestinationPhotos =[
 ];
 
 const getAvailableOffers =(chosenType, arr)=> {
-  const offers = arr.filter((offer)=> offer.type === chosenType);
-  const availableOffers = Object.values(offers[0].offers);
+  const offers = arr.find((offer)=> offer.type === chosenType);
+  const availableOffers = Object.values(offers.offers);
 
   return  availableOffers;
 };
@@ -89,8 +89,7 @@ const getPointOffers =(availableOffers)=>{
       const randomNumber = getRandomInteger(1, foundOffers.length);
       foundOffers[i]=randomNumber;
     }
-    foundOffers.filter((item, index) => foundOffers.indexOf(item) ===index);
-    return foundOffers;
+    return foundOffers.filter((item, index) => foundOffers.indexOf(item) ===index);
   }
   return foundOffers;
 };

@@ -9,6 +9,7 @@ import {
 import PointsPresenter from './presenter/points-presenter.js';
 import PointsModel from './model/point-model.js';
 import { generatePoints } from './mock/point.js';
+import { OFFERS } from './mock/offers.js';
 
 
 const siteMainElement = document.querySelector('.page-main');
@@ -22,7 +23,8 @@ const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls_
 render(new FilterView(), siteTripControlsFilters, RenderPosition.BEFOREEND);
 
 const points = generatePoints();
-const pointsModel = new PointsModel(points);
+const allOffers =OFFERS.slice();
+const pointsModel = new PointsModel(points, allOffers);
 new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointsModel);
 
 

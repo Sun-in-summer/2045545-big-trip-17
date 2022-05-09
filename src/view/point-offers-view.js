@@ -1,28 +1,27 @@
 import {
   createElement
 } from '../render.js';
-import { OFFERS } from '../mock/offers.js';
 import { getAvailableOffers } from '../mock/point.js';
 
-const createPointOffersTemplate = (point={}) => {
+const createPointOffersTemplate = (point={}, allOffers ) => {
   const {type, offers =[]} =point;
 
-  const availableOffers = getAvailableOffers(type, OFFERS);
+  const availableOffers = getAvailableOffers(type, allOffers);
 
 
-  const createOffersItems = (someOffers) =>someOffers.map((item) =>`<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" checked=''>
+  let offersItems = '';
+  if (availableOffers.length > 0) {
+    offersItems = availableOffers.map((item) =>{
+      const checked = offers.includes(item.id) ? 'checked' : '';
+      return `<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${checked}>
                 <label class="event__offer-label" for="event-offer-${item.id}-1">
                   <span class="event__offer-title">${item.title}</span>
                   +€&nbsp;
                   <span class="event__offer-price">${item.price}</span>
                 </label>
-              </div>`).join(' ');
-
-
-  let offersItems = '';
-  if (availableOffers.length > 0) {
-    offersItems = createOffersItems(availableOffers);
+              </div>`;
+    }).join(' ');
   }
 
   let offersContainer ='<div></div>';
@@ -43,12 +42,13 @@ const createPointOffersTemplate = (point={}) => {
 
 
 export default class PointOffersView {
-  constructor(point) {
+  constructor(point, allOffers) {
     this.point = point;
+    this.allOffers =allOffers;
   }
 
   getTemplate() {
-    return createPointOffersTemplate(this.point);
+    return createPointOffersTemplate(this.point, this.allOffers);
   }
 
   getElement() {

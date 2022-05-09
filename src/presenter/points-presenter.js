@@ -31,18 +31,19 @@ export default class PointsPresenter {
     this.pointsModel = pointsModel;
     this.points = [...this.pointsModel.getPoints()];
     this.firstPointCreationFormComponent = new PointCreationFormView(this.points[0]);
+    this.allOffers = [...this.pointsModel.getOffers()];
     render(this.sortComponent, this.pointsContainer);
     render(this.pointsListComponent, this.pointsContainer);
     render(this.pointListItem, this.pointsListComponent.getElement());
     render(this.firstPointCreationFormComponent, this.pointListItem.getElement());
     render(this.pointDetailsComponent, this.firstPointCreationFormComponent.getElement());
-    render(new PointOffersView(this.points[0]), this.pointDetailsComponent.getElement());
+    render(new PointOffersView(this.points[0], this.allOffers), this.pointDetailsComponent.getElement());
     render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
 
     for (let i = 1 ; i <this.points.length; i++) {// здесь  for , а не for of  потому что иначе  снова отражается первый элемент из поинтов
       this.pointListPosition = new PointListItemView(this.points[i]);
       render(this.pointListPosition, this.pointsListComponent.getElement());
-      render(new PointView(this.points[i]), this.pointListPosition.getElement());
+      render(new PointView(this.points[i], this.allOffers), this.pointListPosition.getElement());
     }
 
     render(new InfoView(), this.headerContainer, RenderPosition.AFTERBEGIN);

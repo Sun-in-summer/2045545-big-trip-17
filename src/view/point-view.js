@@ -7,8 +7,9 @@ import {
   countDuration,
   convertToDatetimeFormat
 } from '../utils.js';
+import { getAvailableOffers } from '../mock/point.js';
 
-const createPointTemplate = (point) => {
+const createPointTemplate = (point, allOffers) => {
   const {
     destination,
     basePrice,
@@ -35,8 +36,21 @@ const createPointTemplate = (point) => {
     'event__favorite-btn--active' :
     '';
 
-  // const firstOfferTitle = offers.length !== 0 ? offers[0].title : '';
-  // const firstOfferPrice = offers.length !== 0 ? offers[0].price : '';
+  const availableOffers =getAvailableOffers(type, allOffers);
+
+  let offersList= '';
+  if ((offers.length !== 0)&& (availableOffers.length !==0)) {
+    offersList = offers.map((el)=> {
+      const foundOffer = availableOffers.find((offer) => offer.id === el);
+      const title =foundOffer.title;
+      const price =foundOffer.price;
+      return (`<li class="event__offer">
+                    <span class="event__offer-title">${title}</span>
+                    +€&nbsp;
+                    <span class="event__offer-price">${price}</span>
+                  </li>`);}).join(' ');
+  }
+
 
   return (`<div class="event">
                 <time class="event__date" datetime=${convertedToDatetimeDateFrom}>${startDate}</time>
@@ -57,11 +71,7 @@ const createPointTemplate = (point) => {
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  <li class="event__offer">
-                    <span class="event__offer-title">_____firstOfferTitle________</span>
-                    +€&nbsp;
-                    <span class="event__offer-price">_____firstOfferPrice______</span>
-                  </li>
+                  ${offersList}
                 </ul>
                 <button class = "event__favorite-btn ${favoriteClassName}"
                 type = "button">
@@ -76,13 +86,15 @@ const createPointTemplate = (point) => {
               </div>`);
 };
 
+
 export default class PointView {
-  constructor(point) {
+  constructor(point, allOffers) {
     this.point = point;
+    this.allOffers =allOffers;
   }
 
   getTemplate() {
-    return createPointTemplate(this.point);
+    return createPointTemplate(this.point, this.allOffers);
   }
 
   getElement() {
