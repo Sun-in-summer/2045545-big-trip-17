@@ -75,7 +75,6 @@ const DestinationPhotos =[
 ];
 
 
-
 const getPointOffers =(availableOffers)=>{
   const foundOffers =[];
   if (availableOffers.length > 0) {

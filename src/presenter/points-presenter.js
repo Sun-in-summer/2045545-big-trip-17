@@ -1,11 +1,7 @@
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
-import PointListItemView from '../view/point-list-item-view.js';
 import PointEditFormView from '../view/point-edit-form-view.js';
-import PointDetailsView from '../view/point-details-view.js';
-import PointOffersView from '../view/point-offers-view.js';
-import PointDestinationView from '../view/point-destination-view.js';
 import InfoView from '../view/info-view.js';
 import {
   render
@@ -16,37 +12,79 @@ import {
 
 
 export default class PointsPresenter {
+  #pointsContainer = null;
+  #headerContainer = null;
+  #sortComponent = null;
+  #pointsListComponent = null;
+
+  #pointModel =null;
+
+  #points =[];
+  #allOffers =[];
+
+
   constructor(pointsContainer, headerContainer) {
-    this.pointsContainer = pointsContainer;
-    this.headerContainer = headerContainer;
-    this.sortComponent = new SortView();
-    this.pointsListComponent = new PointsListView();
-    this.pointListItem = new PointListItemView();
-    this.pointCreationFormComponent = new PointEditFormView();
-    this.pointDetailsComponent = new PointDetailsView();
+    this.#pointsContainer = pointsContainer;
+    this.#headerContainer = headerContainer;
+    this.#sortComponent = new SortView();
+    this.#pointsListComponent = new PointsListView();
+
   }
 
 
   init = (pointModel) => {
-    this.pointModel = pointModel;
-    this.points = [...this.pointModel.getPoints()];
-    this.pointEditFormComponent = new PointEditFormView(this.points[0]);
-    this.allOffers = [...this.pointModel.getOffers()];
+    this.#pointModel = pointModel;
+    this.#points = [...this.#pointModel.points];
+    this.#allOffers = [...this.#pointModel.allOffers];
 
-    render(this.sortComponent, this.pointsContainer);
-    render(this.pointsListComponent, this.pointsContainer);
-    render(this.pointListItem, this.pointsListComponent.getElement());
-    render(this.pointEditFormComponent, this.pointListItem.getElement());
-    render(this.pointDetailsComponent, this.pointEditFormComponent.getElement());
-    render(new PointOffersView(this.points[0], this.allOffers), this.pointDetailsComponent.getElement());
-    render(new PointDestinationView(this.points[0]), this.pointDetailsComponent.getElement());
+    render(this.#sortComponent, this.#pointsContainer);
+    render(this.#pointsListComponent, this.#pointsContainer);
 
-    for (let i = 1 ; i <this.points.length; i++) {// здесь  for , а не for of  потому что иначе  снова отражается первый элемент из поинтов
-      this.pointListPosition = new PointListItemView(this.points[i]);
-      render(this.pointListPosition, this.pointsListComponent.getElement());
-      render(new PointView(this.points[i], this.allOffers), this.pointListPosition.getElement());
+
+    for (let i =0 ; i < this.#points.length; i++) {
+      this.#renderPoint(this.#points[i], this.#allOffers);
     }
 
-    render(new InfoView(), this.headerContainer, RenderPosition.AFTERBEGIN);
+    render(new InfoView(), this.#headerContainer, RenderPosition.AFTERBEGIN);
   };
+
+
+  #renderPoint =(point, offers) => {
+
+    const pointComponent = new PointView(point, offers);
+    const pointEditFormComponent = new PointEditFormView(point, offers);
+
+
+    const replaceItemToForm = () => {
+      this.#pointsListComponent.element.replaceChild(pointEditFormComponent.element, pointComponent.element);
+    };
+
+    const replaceFormToItem = () => {
+      this.#pointsListComponent.element.replaceChild(pointComponent.element, pointEditFormComponent.element);
+    };
+
+    const onEscArrowUpKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 'ArrowUp' || evt.keyCode === 38){
+        evt.preventDefault();
+        replaceFormToItem();
+        document.removeEventListener('keydown', onEscArrowUpKeyDown);
+      }
+    };
+
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', ()=> {
+      replaceItemToForm();
+
+      document.addEventListener('keydown', onEscArrowUpKeyDown);
+    });
+
+    pointEditFormComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToItem();
+      document.removeEventListener('keydown', onEscArrowUpKeyDown);
+    });
+
+    render (pointComponent, this.#pointsListComponent.element);
+  };
+
 }
