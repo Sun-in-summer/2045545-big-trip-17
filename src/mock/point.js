@@ -1,5 +1,5 @@
 import {
-  getRandomInteger, generateDateTime, generateNextDate
+  getRandomInteger, generateDateTime, generateNextDate, getAvailableOffers
 } from '../utils.js';
 import { OFFERS } from './offers.js';
 
@@ -74,16 +74,27 @@ const DestinationPhotos =[
   }
 ];
 
-const getOffers =(chosenType, arr)=> {
-  const offers = arr.filter((offer)=> offer.type === chosenType);
-  const foundOffers = Object.values(offers[0].offers);
-  return  foundOffers;
+
+const getPointOffers =(availableOffers)=>{
+  const foundOffers =[];
+  if (availableOffers.length > 0) {
+    foundOffers.length = getRandomInteger(1, availableOffers.length);
+    for (let i =0; i< foundOffers.length;  i++) {
+      const randomNumber = getRandomInteger(1, foundOffers.length);
+      foundOffers[i]=randomNumber;
+    }
+    return foundOffers.filter((item, index) => foundOffers.indexOf(item) ===index);
+  }
+  return foundOffers;
 };
 
 
 const generatePoint = () => {
   const startDate =generateDateTime();
   const settedType=generatePointType();
+  const availableOffers =getAvailableOffers(settedType, OFFERS);
+
+
   return {
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom: startDate,
@@ -91,13 +102,15 @@ const generatePoint = () => {
     destination: generateDestination(),
     id: getRandomInteger(0, RANDOM_POINTS_QUANTITY),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    offers: getOffers(settedType, OFFERS),
+    offers: getPointOffers(availableOffers),
     type: settedType,
   };
+
 };
+
 
 export const generatePoints =()=> Array.from({length: FIRST_POINTS_QUANTITY}, generatePoint);
 
 
-export {DestinationPhotos, DestinationDescriptions};
+export {DestinationPhotos, DestinationDescriptions, getAvailableOffers};
 

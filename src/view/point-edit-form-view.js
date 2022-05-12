@@ -2,8 +2,9 @@ import {
   createElement
 } from '../render.js';
 import {
-  formatToDateAndTime
+  formatToDateAndTime, getAvailableOffers, pickPhotos
 } from '../utils.js';
+import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 
 
 const defaultPoint = {
@@ -14,13 +15,95 @@ const defaultPoint = {
   type:'flight'
 };
 
-const createPointCreationFormTemplate = (point = defaultPoint) => {
+const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
 
   const formattedDateFrom = formatToDateAndTime(point.dateFrom);
   const formattedDateTo = formatToDateAndTime(point.dateTo);
 
+  const availableOffers = getAvailableOffers(point.type, allOffers);
 
-  return (`<form class="event event--edit" action="#" method="post">
+
+  const createOffersSection = ( ) => {
+    let offersItems = '';
+    if (availableOffers.length > 0) {
+      offersItems = availableOffers.map((item) =>{
+        const checked = point.offers.includes(item.id) ? 'checked' : '';
+        return `<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${checked}>
+                <label class="event__offer-label" for="event-offer-${item.id}-1">
+                  <span class="event__offer-title">${item.title}</span>
+                  +€&nbsp;
+                  <span class="event__offer-price">${item.price}</span>
+                </label>
+              </div>`;
+      }).join(' ');
+    }
+
+    let offersContainer ='<div></div>';
+
+    if (point.offers.length === 0) {
+      offersContainer ='<div></div>';
+    }
+    else {
+      offersContainer =`<section class="event__section  event__section--offers">
+                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+                    <div class="event__available-offers">
+                    ${offersItems}
+                     </div>
+                  </section>`;
+    }
+    return offersContainer;
+  };
+
+  const offersSection = createOffersSection();
+
+
+  const createDestinationSection = () => {
+    const destinationDescription = DestinationDescriptions[point.destination];
+    const photos =pickPhotos(DestinationPhotos, point.destination);
+    const createPhotoWaysTemplate =(pickedPhotos) => {
+      let photoWays ='';
+      if (pickedPhotos.length === 0) {
+        return photoWays;
+      }
+      else {
+        for (const pickedPhoto of pickedPhotos){
+          photoWays +=  `<img class="event__photo" src=${pickedPhoto} alt="Event photo">`;
+        }
+      }
+      return photoWays;
+    };
+
+    const photosTemplate =createPhotoWaysTemplate(photos);
+
+
+    const createDestionationPhotoTemplate = (pickedPhotos) => {
+      if (pickedPhotos.length === 0) {
+        return '';
+      }
+      else  {
+        return (`<div class="event__photos-container">
+                      <div class="event__photos-tape">
+                        ${photosTemplate}
+                     </div>
+    </div> `);
+      }
+    };
+
+
+    const photosContainerTemplate =createDestionationPhotoTemplate(photos);
+
+    return (`<section class="event__section  event__section--destination">
+                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${destinationDescription}</p>
+                    ${photosContainerTemplate}
+                  </section>`);
+  };
+
+  const destinationSection = createDestinationSection();
+
+
+  return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -115,27 +198,34 @@ const createPointCreationFormTemplate = (point = defaultPoint) => {
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>
-                </header></form>`);
+                </header><section class="event__details">${offersSection} ${destinationSection}</section></form></li>` );
+
 };
 
-export default class PointCreationFormView {
-  constructor(point) {
-    this.point = point;
+export default class PointEditFormView {
+  #element = null;
+  #point  = null;
+  #allOffers  = null;
+
+
+  constructor(point, allOffers) {
+    this.#point = point;
+    this.#allOffers = allOffers;
   }
 
-  getTemplate() {
-    return createPointCreationFormTemplate(this.point);
+  get template() {
+    return createPointEditFormTemplate(this.#point, this.#allOffers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

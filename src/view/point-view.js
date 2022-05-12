@@ -7,8 +7,9 @@ import {
   countDuration,
   convertToDatetimeFormat
 } from '../utils.js';
+import { getAvailableOffers } from '../mock/point.js';
 
-const createPointTemplate = (point) => {
+const createPointTemplate = (point, allOffers) => {
   const {
     destination,
     basePrice,
@@ -35,10 +36,23 @@ const createPointTemplate = (point) => {
     'event__favorite-btn--active' :
     '';
 
-  const firstOfferTitle = offers.length !== 0 ? offers[0].title : '';
-  const firstOfferPrice = offers.length !== 0 ? offers[0].price : '';
+  const availableOffers =getAvailableOffers(type, allOffers);
 
-  return (`<div class="event">
+  let offersList= '';
+  if ((offers.length !== 0)&& (availableOffers.length !==0)) {
+    offersList = offers.map((el)=> {
+      const foundOffer = availableOffers.find((offer) => offer.id === el);
+      const title =foundOffer.title;
+      const price =foundOffer.price;
+      return (`<li class="event__offer">
+                    <span class="event__offer-title">${title}</span>
+                    +€&nbsp;
+                    <span class="event__offer-price">${price}</span>
+                  </li>`);}).join(' ');
+  }
+
+
+  return (`<li class="trip-events__item"><div class="event">
                 <time class="event__date" datetime=${convertedToDatetimeDateFrom}>${startDate}</time>
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
@@ -57,11 +71,7 @@ const createPointTemplate = (point) => {
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  <li class="event__offer">
-                    <span class="event__offer-title">${firstOfferTitle}</span>
-                    +€&nbsp;
-                    <span class="event__offer-price">${firstOfferPrice}</span>
-                  </li>
+                  ${offersList}
                 </ul>
                 <button class = "event__favorite-btn ${favoriteClassName}"
                 type = "button">
@@ -73,27 +83,34 @@ const createPointTemplate = (point) => {
                 <button class="event__rollup-btn" type="button">
                   <span class="visually-hidden">Open event</span>
                 </button>
-              </div>`);
+              </div></li>`);
 };
 
+
 export default class PointView {
-  constructor(point) {
-    this.point = point;
+  #element = null;
+  #point  = null;
+  #allOffers  = null;
+
+
+  constructor(point, allOffers) {
+    this.#point = point;
+    this.#allOffers = allOffers;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point);
+  get template() {
+    return createPointTemplate(this.#point, this.#allOffers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -7,8 +7,9 @@ import {
 } from './render.js';
 
 import PointsPresenter from './presenter/points-presenter.js';
-import PointsModel from './model/point-model.js';
+import PointModel from './model/point-model.js';
 import { generatePoints } from './mock/point.js';
+import { OFFERS } from './mock/offers.js';
 
 
 const siteMainElement = document.querySelector('.page-main');
@@ -22,7 +23,9 @@ const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls_
 render(new FilterView(), siteTripControlsFilters, RenderPosition.BEFOREEND);
 
 const points = generatePoints();
-const pointsModel = new PointsModel(points);
-new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointsModel);
+const allOffers =OFFERS.slice();
+
+const pointModel = new PointModel(points, allOffers);
+new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointModel);
 
 

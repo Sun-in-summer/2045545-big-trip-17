@@ -114,7 +114,16 @@ const OFFERS = [
   },
   {
     'type': 'restaurant',
-    'offers': [
+    'offers': [{
+      id: 1,
+      title: 'Choose live music',
+      price: 40
+    },
+    {
+      id: 2,
+      title: 'Choose VIP area',
+      price: 30
+    }
     ]
   },
 ];
