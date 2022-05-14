@@ -8,7 +8,7 @@ const MIN_PRICE = 10;
 const MAX_PRICE = 3000;
 const SOME_NUMBER =300;
 const DESTINATION_PHOTO_QUANTITY=5;
-const FIRST_POINTS_QUANTITY = 25;
+const FIRST_POINTS_QUANTITY = 20;
 
 
 const PointType = {
