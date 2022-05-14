@@ -26,6 +26,6 @@ const points = generatePoints();
 const allOffers =OFFERS.slice();
 
 const pointModel = new PointModel(points, allOffers);
-new PointsPresenter(sitePointsElement, siteHeaderMainElement).init(pointModel);
+new PointsPresenter(sitePointsElement, siteHeaderMainElement, pointModel).init();
 
 
