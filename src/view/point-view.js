@@ -1,12 +1,10 @@
-import {
-  createElement
-} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   humanizePointDate,
   pickHoursMinutesFromDate,
   countDuration,
   convertToDatetimeFormat
-} from '../utils.js';
+} from '../utils/point.js';
 import { getAvailableOffers } from '../mock/point.js';
 
 const createPointTemplate = (point, allOffers) => {
@@ -87,13 +85,13 @@ const createPointTemplate = (point, allOffers) => {
 };
 
 
-export default class PointView {
-  #element = null;
+export default class PointView extends AbstractView {
+
   #point  = null;
   #allOffers  = null;
 
-
   constructor(point, allOffers) {
+    super();
     this.#point = point;
     this.#allOffers = allOffers;
   }
@@ -102,15 +100,14 @@ export default class PointView {
     return createPointTemplate(this.#point, this.#allOffers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  };
 
-    return this.#element;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
 }

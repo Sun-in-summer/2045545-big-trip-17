@@ -1,15 +1,10 @@
+import {render, replace, RenderPosition} from '../framework/render.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
 import PointEditFormView from '../view/point-edit-form-view.js';
 import InfoView from '../view/info-view.js';
 import NoPointsView from '../view/no-points-view.js';
-import {
-  render
-} from '../render.js';
-import {
-  RenderPosition
-} from '../render.js';
 
 
 export default class PointsPresenter {
@@ -47,11 +42,11 @@ export default class PointsPresenter {
 
 
     const replaceItemToForm = () => {
-      this.#pointsListComponent.element.replaceChild(pointEditFormComponent.element, pointComponent.element);
+      replace(pointEditFormComponent, pointComponent);
     };
 
     const replaceFormToItem = () => {
-      this.#pointsListComponent.element.replaceChild(pointComponent.element, pointEditFormComponent.element);
+      replace(pointComponent, pointEditFormComponent);
     };
 
     const onEscArrowUpKeyDown = (evt) => {
@@ -63,14 +58,12 @@ export default class PointsPresenter {
     };
 
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', ()=> {
+    pointComponent.setEditClickHandler(()=> {
       replaceItemToForm();
-
       document.addEventListener('keydown', onEscArrowUpKeyDown);
     });
 
-    pointEditFormComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditFormComponent.setFormSubmitHandler(() => {
       replaceFormToItem();
       document.removeEventListener('keydown', onEscArrowUpKeyDown);
     });
