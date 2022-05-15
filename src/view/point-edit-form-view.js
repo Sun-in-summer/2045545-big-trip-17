@@ -1,9 +1,7 @@
-import {
-  createElement
-} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   formatToDateAndTime, getAvailableOffers, pickPhotos
-} from '../utils.js';
+} from '../utils/point.js';
 import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 
 
@@ -202,13 +200,13 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
 
 };
 
-export default class PointEditFormView {
-  #element = null;
+export default class PointEditFormView extends AbstractView {
   #point  = null;
   #allOffers  = null;
 
 
-  constructor(point, allOffers) {
+  constructor(point = defaultPoint, allOffers) {
+    super();
     this.#point = point;
     this.#allOffers = allOffers;
   }
@@ -217,15 +215,14 @@ export default class PointEditFormView {
     return createPointEditFormTemplate(this.#point, this.#allOffers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
 
-    return this.#element;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
 }

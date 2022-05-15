@@ -1,6 +1,6 @@
 import {
-  getRandomInteger, generateDateTime, generateNextDate, getAvailableOffers
-} from '../utils.js';
+  generateDateTime, generateNextDate, getAvailableOffers} from '../utils/point.js';
+import { getRandomInteger } from '../utils/common.js';
 import { OFFERS } from './offers.js';
 
 const RANDOM_POINTS_QUANTITY = 10;
