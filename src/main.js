@@ -5,6 +5,7 @@ import PointsPresenter from './presenter/points-presenter.js';
 import PointModel from './model/point-model.js';
 import { generatePoints } from './mock/point.js';
 import { OFFERS } from './mock/offers.js';
+import { generateFilter } from './mock/filter.js';
 
 
 const siteMainElement = document.querySelector('.page-main');
@@ -15,12 +16,16 @@ const siteHeaderElement = document.querySelector('.page-header');
 const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls__filters');
 
 
-render(new FilterView(), siteTripControlsFilters, RenderPosition.BEFOREEND);
-
 const points = generatePoints();
 const allOffers =OFFERS.slice();
 
 const pointModel = new PointModel(points, allOffers);
-new PointsPresenter(sitePointsElement, siteHeaderMainElement, pointModel).init();
+const pointsPresenter = new  PointsPresenter(sitePointsElement, siteHeaderMainElement, pointModel);
+
+const filters =generateFilter(pointModel.points);
+
+render(new FilterView(filters), siteTripControlsFilters, RenderPosition.BEFOREEND);
+
+pointsPresenter.init();
 
 
