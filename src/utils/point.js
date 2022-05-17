@@ -50,15 +50,15 @@ const pickPhotos = (DestinationPhotos ,destionationForPhoto) => {
 };
 
 
-const generateNextDate =(date) =>{
-  const maxMinutsGap = 7*24*60;
-  const minutesGap = getRandomInteger(0, maxMinutsGap);
+const generateNextDate =(date, negativeMinutesGap) =>{
+  const maxMinutesGap = 7*24*60;
+  const minutesGap = getRandomInteger(negativeMinutesGap, maxMinutesGap);
   return date.add(minutesGap, 'minutes');
 };
 
-const generateDateTime = () => {
+const generateDateTime = (negativeMinutesGap) => {
   const date = dayjs();
-  return generateNextDate(date);
+  return generateNextDate(date, negativeMinutesGap);
 };
 
 const convertToDatetimeFormat =(date) => dayjs(date).format('YYYY-MM-DD');
@@ -71,6 +71,10 @@ const getAvailableOffers =(chosenType, arr)=> {
 };
 
 
+const isPastPoint = (dateFrom, dateTo) => (dateFrom && dayjs().isAfter(dateFrom, 'D')) && (dateTo && dayjs().isAfter(dateTo, 'D'));
+const isFuturePoint =(dateFrom, dateTo) => (dateFrom && dayjs().isBefore(dateFrom, 'D')) && (dateTo && dayjs().isBefore(dateTo, 'D')) ;
+
+
 export {
   humanizePointDate,
   pickHoursMinutesFromDate,
@@ -80,6 +84,8 @@ export {
   generateDateTime,
   generateNextDate,
   convertToDatetimeFormat,
-  getAvailableOffers
+  getAvailableOffers,
+  isPastPoint,
+  isFuturePoint
 };
 

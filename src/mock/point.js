@@ -3,12 +3,13 @@ import {
 import { getRandomInteger } from '../utils/common.js';
 import { OFFERS } from './offers.js';
 
-const RANDOM_POINTS_QUANTITY = 10;
 const MIN_PRICE = 10;
 const MAX_PRICE = 3000;
 const SOME_NUMBER =300;
 const DESTINATION_PHOTO_QUANTITY=5;
 const FIRST_POINTS_QUANTITY = 20;
+const MINUTES_PER_DAY= 24*60;
+const PAST_DAYS = -7*MINUTES_PER_DAY;
 
 
 const PointType = {
@@ -90,7 +91,7 @@ const getPointOffers =(availableOffers)=>{
 
 
 const generatePoint = () => {
-  const startDate =generateDateTime();
+  const startDate =generateDateTime(PAST_DAYS);
   const settedType=generatePointType();
   const availableOffers =getAvailableOffers(settedType, OFFERS);
 
@@ -98,9 +99,9 @@ const generatePoint = () => {
   return {
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom: startDate,
-    dateTo: generateNextDate(startDate),
+    dateTo: generateNextDate(startDate, 0),
     destination: generateDestination(),
-    id: getRandomInteger(0, RANDOM_POINTS_QUANTITY),
+    id: getRandomInteger(0, FIRST_POINTS_QUANTITY),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: getPointOffers(availableOffers),
     type: settedType,
