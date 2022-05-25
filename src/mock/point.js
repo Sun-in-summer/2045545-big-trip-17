@@ -2,6 +2,7 @@ import {
   generateDateTime, generateNextDate, getAvailableOffers} from '../utils/point.js';
 import { getRandomInteger } from '../utils/common.js';
 import { OFFERS } from './offers.js';
+import { nanoid } from 'nanoid';
 
 const MIN_PRICE = 10;
 const MAX_PRICE = 3000;
@@ -97,11 +98,11 @@ const generatePoint = () => {
 
 
   return {
+    id: nanoid(),
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom: startDate,
     dateTo: generateNextDate(startDate, 0),
     destination: generateDestination(),
-    id: getRandomInteger(0, FIRST_POINTS_QUANTITY),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: getPointOffers(availableOffers),
     type: settedType,

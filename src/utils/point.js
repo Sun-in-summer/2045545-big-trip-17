@@ -66,7 +66,6 @@ const convertToDatetimeFormat =(date) => dayjs(date).format('YYYY-MM-DD');
 const getAvailableOffers =(chosenType, arr)=> {
   const offers = arr.find((offer)=> offer.type === chosenType);
   const availableOffers = Object.values(offers.offers);
-
   return  availableOffers;
 };
 
