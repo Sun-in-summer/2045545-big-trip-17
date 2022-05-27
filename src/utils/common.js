@@ -21,11 +21,4 @@ const updateItem = (items, update) => {
 };
 
 
-const checkCheckedProperty =() =>{
-  const sortInputs = document.querySelectorAll('.trip-sort__item input');
-  for (let i= 0; i < sortInputs.length; i++) {
-    console.log(sortInputs[i].checked);
-  }
-};
-
-export {getRandomInteger, updateItem, checkCheckedProperty};
+export {getRandomInteger, updateItem};

@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {SortType} from '../const.js';
-import {checkCheckedProperty } from '../utils/common.js';
+
 
 const createSortTemplate = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
