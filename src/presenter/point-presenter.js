@@ -79,18 +79,18 @@ export default class PointPresenter {
 
   #replaceItemToForm = () => {
     replace(this.#pointEditFormComponent, this.#pointComponent);
-    document.addEventListener('keydown', this.#EscArrowUpKeyDownHandler);
+    document.addEventListener('keydown', this.#escArrowUpKeyDownHandler);
     this.#changeMode();
     this.#mode =Mode.EDITING;
   };
 
   #replaceFormToItem = () => {
     replace(this.#pointComponent, this.#pointEditFormComponent);
-    document.removeEventListener('keydown', this.#EscArrowUpKeyDownHandler);
+    document.removeEventListener('keydown', this.#escArrowUpKeyDownHandler);
     this.#mode =Mode.DEFAULT;
   };
 
-  #EscArrowUpKeyDownHandler = (evt) => {
+  #escArrowUpKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 'ArrowUp' || evt.keyCode === 38){
       evt.preventDefault();
       this.#replaceFormToItem();

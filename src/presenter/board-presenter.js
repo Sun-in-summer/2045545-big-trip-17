@@ -5,6 +5,8 @@ import InfoView from '../view/info-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointPresenter from './point-presenter.js';
 import {updateItem} from '../utils/common.js';
+import {SortType} from '../const.js';
+import {sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
 
 
 export default class BoardPresenter {
@@ -17,8 +19,10 @@ export default class BoardPresenter {
 
   #points = [];
   #allOffers = [];
+  #sourcedPoints =[];
 
   #pointPresenter = new Map();
+  #currentSortType = SortType.DEFAULT;
 
 
   constructor(pointsContainer, headerContainer, pointModel) {
@@ -34,18 +38,29 @@ export default class BoardPresenter {
 
 
   init = () => {
+    this.#sourcedPoints = [...this.#pointModel.points];
     this.#renderPointsBoard();
   };
 
-  #renderSort =()=>{
-    render(this.#sortComponent, this.#pointsContainer);
+  #handleSortTypeChange =(sortType) =>{
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#renderPointsList();
   };
 
-  #renderNoPoints =() => {
+  #renderSort = () =>{
+    render(this.#sortComponent, this.#pointsContainer);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  };
+
+  #renderNoPoints = () => {
     render(this.#noPointsComponent, this.#pointsContainer);
   };
 
-  #renderInfo =() => {
+  #renderInfo = () => {
     render(new InfoView(), this.#headerContainer, RenderPosition.AFTERBEGIN);
   };
 
@@ -86,6 +101,23 @@ export default class BoardPresenter {
 
   #handlePointChange = (updatedPoint) =>{
     this.#points = updateItem(this.#points, updatedPoint);
+    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#allOffers);
   };
+
+  #sortPoints = (sortType) =>{
+    switch (sortType) {
+      case SortType.TIME_DOWN:
+        this.#points.sort(sortPointDateDown);
+        break;
+      case SortType.PRICE_DOWN:
+        this.#points.sort(sortPointPriceDown);
+        break;
+      default:
+        this.#points = [...this.#sourcedPoints];
+    }
+    this.#currentSortType = sortType;
+  };
+
+
 }

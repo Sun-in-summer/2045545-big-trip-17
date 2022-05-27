@@ -4,4 +4,11 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {FilterType};
+
+const SortType = {
+  DEFAULT: 'default',
+  TIME_DOWN: 'time_down',
+  PRICE_DOWN: 'price_down'
+};
+
+export {FilterType, SortType};
