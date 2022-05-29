@@ -74,6 +74,32 @@ const isPastPoint = (dateFrom, dateTo) => (dateFrom && dayjs().isAfter(dateFrom,
 const isFuturePoint =(dateFrom, dateTo) => (dateFrom && dayjs().isBefore(dateFrom, 'D')) && (dateTo && dayjs().isBefore(dateTo, 'D')) ;
 
 
+// const getWeightForNullDate = (dateA, dateB) => {
+//   if (dateA === null && dateB === null) {
+//     return 0;
+//   }
+
+//   if (dateA === null) {
+//     return 1;
+//   }
+
+//   if (dateB === null) {
+//     return -1;
+//   }
+
+//   return null;
+// };
+
+const sortPointDateDown = (pointA, pointB) => {
+  const pointADuration= dayjs.duration(pointA.dateTo.diff(pointA.dateFrom));
+  const pointBDuration= dayjs.duration(pointB.dateTo.diff(pointB.dateFrom));
+  const durationDifference =  pointBDuration.subtract(pointADuration).$ms;
+  return (durationDifference);
+};
+
+const sortPointPriceDown = (pointA, pointB) => (pointB.basePrice-pointA.basePrice);
+
+
 export {
   humanizePointDate,
   pickHoursMinutesFromDate,
@@ -85,6 +111,8 @@ export {
   convertToDatetimeFormat,
   getAvailableOffers,
   isPastPoint,
-  isFuturePoint
+  isFuturePoint,
+  sortPointDateDown,
+  sortPointPriceDown
 };
 
