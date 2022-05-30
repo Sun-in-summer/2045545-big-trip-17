@@ -22,7 +22,7 @@ const allOffers =OFFERS.slice();
 const pointModel = new PointModel(points, allOffers);
 const boardPresenter = new  BoardPresenter(sitePointsElement, siteHeaderMainElement, pointModel);
 
-const filters =generateFilter(pointModel.points);
+const filters = generateFilter(pointModel.points);
 
 render(new FilterView(filters), siteTripControlsFilters, RenderPosition.BEFOREEND);
 

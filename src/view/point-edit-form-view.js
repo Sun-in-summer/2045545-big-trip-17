@@ -1,4 +1,5 @@
-import AbstractView from '../framework/view/abstract-view.js';
+
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
   formatToDateAndTime, getAvailableOffers, pickPhotos
 } from '../utils/point.js';
@@ -140,7 +141,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                           <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                         </div>
 
@@ -166,11 +167,12 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1">
-                    <datalist id="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
+                    <datalist id="destination-list-1" >
                       <option value="Amsterdam"></option>
                       <option value="Geneva"></option>
                       <option value="Chamonix"></option>
+                      <option value="Moscow"></option>
                     </datalist>
                   </div>
 
@@ -200,20 +202,28 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
 
 };
 
-export default class PointEditFormView extends AbstractView {
+export default class PointEditFormView extends AbstractStatefulView {
   #point  = null;
   #allOffers  = null;
+  #availableOffers = null;
 
 
   constructor(point = defaultPoint, allOffers) {
     super();
-    this.#point = point;
     this.#allOffers = allOffers;
+    this._state = PointEditFormView.convertPointToState(point, allOffers);
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createPointEditFormTemplate(this.#point, this.#allOffers);
+    return createPointEditFormTemplate(this._state, this.#allOffers);
   }
+
+
+  _restoreHandlers =() =>{
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
@@ -222,7 +232,68 @@ export default class PointEditFormView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(PointEditFormView.convertStateToPoint(this._state));
   };
+
+  #setInnerHandlers = () =>{
+    this.element.querySelector('.event__type-list').addEventListener('input', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    if (this.element.querySelector('.event__available-offers') !== null) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    }
+  };
+
+  // #getAvailableOffers =() =>{
+  //   this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
+  // };
+
+  #offerChangeHandler =(evt) =>{
+    evt.preventDefault();
+
+    this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
+    console.log('state');
+    console.log(this._state);
+    console.log('availOff');
+    console.log(this.#availableOffers);
+    evt.target.checked = !this._state.evt.target.checked;
+
+    this.updateElement({
+      offers: this._state.offers,
+    });
+
+  };
+
+  #priceInputHandler =(evt) =>{
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    evt.target.checked = true;
+    this.updateElement({
+      destination: evt.target.value,
+    });
+  };
+
+
+  #pointTypeChangeHandler = (evt) =>{
+    evt.preventDefault();
+    evt.target.checked = true;
+    const newAvailableOffers = getAvailableOffers(evt.target.value, this.#allOffers);
+    console.log(newAvailableOffers);
+    this.updateElement({
+      offers: this._state.offers,
+      type: evt.target.value,
+    });
+
+  };
+
+  static convertPointToState = (point, allOffers) =>({...point, allOffers: allOffers});
+  static convertStateToPoint =(state) =>({...state});
+
 
 }
