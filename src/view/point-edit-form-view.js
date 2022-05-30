@@ -169,6 +169,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                       <option value="Geneva"></option>
                       <option value="Chamonix"></option>
                       <option value="Moscow"></option>
+                      <option value="Beijing"></option>
                     </datalist>
                   </div>
 
@@ -189,7 +190,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}" required>
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -203,6 +204,7 @@ export default class PointEditFormView extends AbstractStatefulView {
   #allOffers  = null;
   #availableOffers = null;
   #newAvailableOffers= null;
+  #pointPrice = null;
 
 
   constructor(point = defaultPoint, allOffers) {
@@ -241,14 +243,15 @@ export default class PointEditFormView extends AbstractStatefulView {
     }
   };
 
-  // #getAvailableOffers =() =>{
-  //   this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
-  // };
-
-  #offerChangeHandler =(evt) =>{ //не работает как должно
+  #offerChangeHandler =(evt) =>{
     evt.preventDefault();
-    this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
-    evt.target.checked = !this._state.evt.target.checked;
+    const offerName = parseInt(evt.target.name.slice(12), 10);
+    if (this._state.offers.includes(offerName)) {
+      this._state.offers.splice(this._state.offers.indexOf(offerName), 1);
+    }
+    else {
+      this._state.offers.push(offerName);
+    }
     this.updateElement({
       offers: this._state.offers,
     });
@@ -257,10 +260,19 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #priceInputHandler =(evt) =>{
     evt.preventDefault();
+    if (evt.target.value > 0 && (evt.target.value % 1 === 0)){
+      this.#pointPrice =evt.target.value;
+    }
+    else if (evt.target.value > 0 && (evt.target.value % 1 !== 0) || (evt.target.value <= 0) ){
+      this.updateElement({
+        basePrice: '',
+      });
+    }
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: this.#pointPrice,
     });
   };
+
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
@@ -280,8 +292,6 @@ export default class PointEditFormView extends AbstractStatefulView {
       // offers: this.#newAvailableOffers,
       type: evt.target.value,
     });
-    console.log(this._state);
-
   };
 
   static convertPointToState = (point) =>({...point});
