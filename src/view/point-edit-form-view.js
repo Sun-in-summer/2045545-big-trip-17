@@ -38,20 +38,16 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       }).join(' ');
     }
 
-    let offersContainer ='<div></div>';
-
-    if (point.offers.length === 0) {
-      offersContainer ='<div></div>';
+    let isVisible = true;
+    if (availableOffers.length === 0) {
+      isVisible = false;
     }
-    else {
-      offersContainer =`<section class="event__section  event__section--offers">
+    return `<section class="event__section  event__section--offers" ${isVisible? '' : 'hidden'}>
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
                     ${offersItems}
                      </div>
                   </section>`;
-    }
-    return offersContainer;
   };
 
   const offersSection = createOffersSection();
@@ -206,12 +202,13 @@ export default class PointEditFormView extends AbstractStatefulView {
   #point  = null;
   #allOffers  = null;
   #availableOffers = null;
+  #newAvailableOffers= null;
 
 
   constructor(point = defaultPoint, allOffers) {
     super();
     this.#allOffers = allOffers;
-    this._state = PointEditFormView.convertPointToState(point, allOffers);
+    this._state = PointEditFormView.convertPointToState(point);
     this.#setInnerHandlers();
   }
 
@@ -248,16 +245,10 @@ export default class PointEditFormView extends AbstractStatefulView {
   //   this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
   // };
 
-  #offerChangeHandler =(evt) =>{
+  #offerChangeHandler =(evt) =>{ //не работает как должно
     evt.preventDefault();
-
     this.#availableOffers=getAvailableOffers(this._state.type, this.#allOffers);
-    console.log('state');
-    console.log(this._state);
-    console.log('availOff');
-    console.log(this.#availableOffers);
     evt.target.checked = !this._state.evt.target.checked;
-
     this.updateElement({
       offers: this._state.offers,
     });
@@ -283,16 +274,17 @@ export default class PointEditFormView extends AbstractStatefulView {
   #pointTypeChangeHandler = (evt) =>{
     evt.preventDefault();
     evt.target.checked = true;
-    const newAvailableOffers = getAvailableOffers(evt.target.value, this.#allOffers);
-    console.log(newAvailableOffers);
+    this.#newAvailableOffers = getAvailableOffers(evt.target.value, this.#allOffers);
     this.updateElement({
-      offers: this._state.offers,
+      availableOffers: this.#newAvailableOffers,
+      // offers: this.#newAvailableOffers,
       type: evt.target.value,
     });
+    console.log(this._state);
 
   };
 
-  static convertPointToState = (point, allOffers) =>({...point, allOffers: allOffers});
+  static convertPointToState = (point) =>({...point});
   static convertStateToPoint =(state) =>({...state});
 
 
