@@ -242,9 +242,9 @@ export default class PointEditFormView extends AbstractStatefulView {
   };
 
   #setInnerHandlers = () =>{
-    this.element.querySelector('.event__type-list').addEventListener('input', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
     if (this.element.querySelector('.event__available-offers') !== null) {
       this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
     }
@@ -267,27 +267,36 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #priceInputHandler =(evt) =>{
     evt.preventDefault();
-    if (evt.target.value > 0 && (evt.target.value % 1 === 0)){
-      this.#pointPrice =evt.target.value;
-    }
-    else if (evt.target.value > 0 && (evt.target.value % 1 !== 0) || (evt.target.value <= 0) ){
+    if ( (evt.target.value % 1 !== 0) || (evt.target.value <= 0) ){
       this.updateElement({
         basePrice: '',
       });
     }
+    else {
+      this.#pointPrice = evt.target.value;
+    }
     this._setState({
       basePrice: this.#pointPrice,
     });
+
   };
 
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    const oldDestination = this._state.destination;
     evt.target.checked = true;
-    if (evt.target.value) {
+    if (Object.keys(DestinationDescriptions).includes(evt.target.value)) {
       this.updateElement({
         destination: evt.target.value,
       });
+    }
+    else {
+      this.updateElement({
+        destination: oldDestination,
+      });
+
+
     }
   };
 
@@ -304,7 +313,9 @@ export default class PointEditFormView extends AbstractStatefulView {
   };
 
   static convertPointToState = (point) =>({...point});
-  static convertStateToPoint =(state) =>({...state});
-
-
+  static convertStateToPoint =(state) =>{
+    const point = {...state};
+    delete point.availableOffers;
+    return point;
+  };
 }
