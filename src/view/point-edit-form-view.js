@@ -205,6 +205,7 @@ export default class PointEditFormView extends AbstractStatefulView {
   #availableOffers = null;
   #newAvailableOffers= null;
   #pointPrice = null;
+  #oldChosenOffers = null;
 
 
   constructor(point = defaultPoint, allOffers) {
@@ -222,6 +223,12 @@ export default class PointEditFormView extends AbstractStatefulView {
   _restoreHandlers =() =>{
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+  };
+
+  reset = (point) =>{
+    this.updateElement(
+      PointEditFormView.convertPointToState(point),
+    );
   };
 
   setFormSubmitHandler = (callback) => {
@@ -277,9 +284,11 @@ export default class PointEditFormView extends AbstractStatefulView {
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     evt.target.checked = true;
-    this.updateElement({
-      destination: evt.target.value,
-    });
+    if (evt.target.value) {
+      this.updateElement({
+        destination: evt.target.value,
+      });
+    }
   };
 
 
@@ -289,7 +298,7 @@ export default class PointEditFormView extends AbstractStatefulView {
     this.#newAvailableOffers = getAvailableOffers(evt.target.value, this.#allOffers);
     this.updateElement({
       availableOffers: this.#newAvailableOffers,
-      // offers: this.#newAvailableOffers,
+      offers: [],
       type: evt.target.value,
     });
   };

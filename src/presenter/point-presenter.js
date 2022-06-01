@@ -93,6 +93,7 @@ export default class PointPresenter {
   #escArrowUpKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 'ArrowUp' || evt.keyCode === 38){
       evt.preventDefault();
+      this.#pointEditFormComponent.reset(this.#point);
       this.#replaceFormToItem();
     }
   };
