@@ -4,6 +4,8 @@ import {
   formatToDateAndTime, getAvailableOffers, pickPhotos
 } from '../utils/point.js';
 import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 const defaultPoint = {
@@ -206,6 +208,8 @@ export default class PointEditFormView extends AbstractStatefulView {
   #newAvailableOffers= null;
   #pointPrice = null;
   #oldChosenOffers = null;
+  #datepickerFrom = null;
+  #datepickerTo= null;
 
 
   constructor(point = defaultPoint, allOffers) {
@@ -213,22 +217,42 @@ export default class PointEditFormView extends AbstractStatefulView {
     this.#allOffers = allOffers;
     this._state = PointEditFormView.convertPointToState(point);
     this.#setInnerHandlers();
+    this.#setDatepickerFrom();
+    this.#setDatepickerTo();
+
   }
 
   get template() {
     return createPointEditFormTemplate(this._state, this.#allOffers);
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  };
+
 
   _restoreHandlers =() =>{
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormResetHandler(this._callback.formReset);
+    this.#setDatepickerFrom();
+    this.#setDatepickerTo();
   };
 
   reset = (point) =>{
     this.updateElement(
       PointEditFormView.convertPointToState(point),
     );
+
   };
 
   setFormSubmitHandler = (callback) => {
@@ -236,10 +260,67 @@ export default class PointEditFormView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  setFormResetHandler = (callback) => {
+    this._callback.formReset = callback;
+    this.element.querySelector('form').addEventListener('reset', this.#formResetHandler);
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({ // проверять нужно ли так
+      offers: this._state.offers,
+    });
     this._callback.formSubmit(PointEditFormView.convertStateToPoint(this._state));
   };
+
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formReset();
+  };
+
+  #dateFromPeriodChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+    this.element.querySelector('#event-end-time-1').click();
+  };
+
+  #dateToPeriodChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+
+  #setDatepickerFrom = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateFrom.$d,
+        onClose: this.#dateFromPeriodChangeHandler,
+      },
+    );
+  };
+
+  #setDatepickerTo = () => {
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        minDate: this.#datepickerFrom.selectedDates[0],
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateTo.$d,
+        onClose: this.#dateToPeriodChangeHandler,
+      },
+    );
+  };
+
 
   #setInnerHandlers = () =>{
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
@@ -259,7 +340,7 @@ export default class PointEditFormView extends AbstractStatefulView {
     else {
       this._state.offers.push(offerName);
     }
-    this.updateElement({
+    this._setState({
       offers: this._state.offers,
     });
 
@@ -312,7 +393,7 @@ export default class PointEditFormView extends AbstractStatefulView {
     });
   };
 
-  static convertPointToState = (point) =>({...point});
+  static convertPointToState = (point) =>({...point, offers: point.offers.slice()});
   static convertStateToPoint =(state) =>{
     const point = {...state};
     delete point.availableOffers;

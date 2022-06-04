@@ -25,8 +25,8 @@ const createPointTemplate = (point, allOffers) => {
   const startTime = pickHoursMinutesFromDate(dateFrom);
   const endTime = pickHoursMinutesFromDate(dateTo);
 
-  const convertedToDatetimeDateFrom=convertToDatetimeFormat(dateFrom);
-  const convertedToDatetimeDateTo=convertToDatetimeFormat(dateTo);
+  const convertedToDatetimeDateFrom = convertToDatetimeFormat(dateFrom);
+  const convertedToDatetimeDateTo = convertToDatetimeFormat(dateTo);
 
   const duration = countDuration(dateTo, dateFrom);
 
@@ -99,6 +99,7 @@ export default class PointView extends AbstractView {
   get template() {
     return createPointTemplate(this.#point, this.#allOffers);
   }
+
 
   setEditClickHandler = (callback) => {
     this._callback.editClick = callback;
