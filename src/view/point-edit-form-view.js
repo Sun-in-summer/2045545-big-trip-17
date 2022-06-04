@@ -30,7 +30,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       offersItems = availableOffers.map((item) =>{
         const checked = point.offers.includes(item.id) ? 'checked' : '';
         return `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${checked}>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" data-offer-type=${item.id} ${checked}>
                 <label class="event__offer-label" for="event-offer-${item.id}-1">
                   <span class="event__offer-title">${item.title}</span>
                   +€&nbsp;
@@ -326,16 +326,22 @@ export default class PointEditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
-    if (this.element.querySelector('.event__available-offers') !== null) {
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    const availableOffers = this.element.querySelector('.event__available-offers');
+    if (availableOffers !== null) {
+      availableOffers.addEventListener('change', this.#offerChangeHandler);
     }
   };
 
   #offerChangeHandler =(evt) =>{
     evt.preventDefault();
-    const offerName = parseInt(evt.target.name.slice(12), 10);
-    if (this._state.offers.includes(offerName)) {
-      this._state.offers.splice(this._state.offers.indexOf(offerName), 1);
+    // const offerName = parseInt(evt.target.name.slice(12), 10);
+    console.log(typeof(parseInt(evt.target.name.slice(12), 10)));
+    console.log(typeof(evt.target.dataset.offerType));
+    const offerName = +evt.target.dataset.offerType;
+    console.log(offerName);
+    const offerIndex = this._state.offers.indexOf(offerName);
+    if (offerIndex !== -1) {
+      this._state.offers.splice(offerIndex, 1);
     }
     else {
       this._state.offers.push(offerName);
@@ -348,13 +354,14 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #priceInputHandler =(evt) =>{
     evt.preventDefault();
-    if ( (evt.target.value % 1 !== 0) || (evt.target.value <= 0) ){
+    const basePrice =+evt.target.value;
+    if ( isNaN(basePrice) || basePrice <= 0 || evt.target.value % 1 !== 0 ) {
       this.updateElement({
         basePrice: '',
       });
     }
     else {
-      this.#pointPrice = evt.target.value;
+      this.#pointPrice = basePrice;
     }
     this._setState({
       basePrice: this.#pointPrice,
