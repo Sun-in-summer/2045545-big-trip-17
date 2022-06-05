@@ -1,8 +1,11 @@
-import AbstractView from '../framework/view/abstract-view.js';
+
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
   formatToDateAndTime, getAvailableOffers, pickPhotos
 } from '../utils/point.js';
 import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 const defaultPoint = {
@@ -27,7 +30,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       offersItems = availableOffers.map((item) =>{
         const checked = point.offers.includes(item.id) ? 'checked' : '';
         return `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" ${checked}>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" data-offer-type="${item.id}" ${checked}>
                 <label class="event__offer-label" for="event-offer-${item.id}-1">
                   <span class="event__offer-title">${item.title}</span>
                   +€&nbsp;
@@ -37,20 +40,16 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       }).join(' ');
     }
 
-    let offersContainer ='<div></div>';
-
-    if (point.offers.length === 0) {
-      offersContainer ='<div></div>';
+    let isVisible = true;
+    if (availableOffers.length === 0) {
+      isVisible = false;
     }
-    else {
-      offersContainer =`<section class="event__section  event__section--offers">
+    return `<section class="event__section  event__section--offers" ${isVisible? '' : 'hidden'}>
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
                     ${offersItems}
                      </div>
                   </section>`;
-    }
-    return offersContainer;
   };
 
   const offersSection = createOffersSection();
@@ -140,7 +139,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                           <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                         </div>
 
@@ -166,11 +165,13 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1">
-                    <datalist id="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
+                    <datalist id="destination-list-1" >
                       <option value="Amsterdam"></option>
                       <option value="Geneva"></option>
                       <option value="Chamonix"></option>
+                      <option value="Moscow"></option>
+                      <option value="Beijing"></option>
                     </datalist>
                   </div>
 
@@ -191,7 +192,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}" required>
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -200,29 +201,205 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
 
 };
 
-export default class PointEditFormView extends AbstractView {
+export default class PointEditFormView extends AbstractStatefulView {
   #point  = null;
   #allOffers  = null;
+  #availableOffers = null;
+  #newAvailableOffers= null;
+  #pointPrice = null;
+  #oldChosenOffers = null;
+  #datepickerFrom = null;
+  #datepickerTo= null;
 
 
   constructor(point = defaultPoint, allOffers) {
     super();
-    this.#point = point;
     this.#allOffers = allOffers;
+    this._state = PointEditFormView.convertPointToState(point);
+    this.#setInnerHandlers();
+    this.#setDatepickerFrom();
+    this.#setDatepickerTo();
+
   }
 
   get template() {
-    return createPointEditFormTemplate(this.#point, this.#allOffers);
+    return createPointEditFormTemplate(this._state, this.#allOffers);
   }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  };
+
+
+  _restoreHandlers =() =>{
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormResetHandler(this._callback.formReset);
+    this.#setDatepickerFrom();
+    this.#setDatepickerTo();
+  };
+
+  reset = (point) =>{
+    this.updateElement(
+      PointEditFormView.convertPointToState(point),
+    );
+
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+  setFormResetHandler = (callback) => {
+    this._callback.formReset = callback;
+    this.element.querySelector('form').addEventListener('reset', this.#formResetHandler);
   };
 
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({ // проверять нужно ли так
+      offers: this._state.offers,
+    });
+    this._callback.formSubmit(PointEditFormView.convertStateToPoint(this._state));
+  };
+
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formReset();
+  };
+
+  #dateFromPeriodChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+    this.element.querySelector('#event-end-time-1').click();
+  };
+
+  #dateToPeriodChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+
+  #setDatepickerFrom = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateFrom.$d,
+        onClose: this.#dateFromPeriodChangeHandler,
+      },
+    );
+  };
+
+  #setDatepickerTo = () => {
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        minDate: this.#datepickerFrom.selectedDates[0],
+        enableTime: true,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        defaultDate: this._state.dateTo.$d,
+        onClose: this.#dateToPeriodChangeHandler,
+      },
+    );
+  };
+
+
+  #setInnerHandlers = () =>{
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
+    const availableOffers = this.element.querySelector('.event__available-offers');
+    if (availableOffers !== null) {
+      availableOffers.addEventListener('change', this.#offerChangeHandler);
+    }
+  };
+
+  #offerChangeHandler =(evt) =>{
+    evt.preventDefault();
+    const offerName = +evt.target.dataset.offerType;
+    const offerIndex = this._state.offers.indexOf(offerName);
+    if (offerIndex !== -1) {
+      this._state.offers.splice(offerIndex, 1);
+    }
+    else {
+      this._state.offers.push(offerName);
+    }
+    this._setState({
+      offers: this._state.offers,
+    });
+
+  };
+
+  #priceInputHandler =(evt) =>{
+    evt.preventDefault();
+    const basePrice =+evt.target.value;
+    if ( isNaN(basePrice) || basePrice <= 0 || evt.target.value % 1 !== 0 ) {
+      this.updateElement({
+        basePrice: '',
+      });
+    }
+    else {
+      this.#pointPrice = basePrice;
+    }
+    this._setState({
+      basePrice: this.#pointPrice,
+    });
+
+  };
+
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    const oldDestination = this._state.destination;
+    evt.target.checked = true;
+    if (Object.keys(DestinationDescriptions).includes(evt.target.value)) {
+      this.updateElement({
+        destination: evt.target.value,
+      });
+    }
+    else {
+      this.updateElement({
+        destination: oldDestination,
+      });
+
+
+    }
+  };
+
+
+  #pointTypeChangeHandler = (evt) =>{
+    evt.preventDefault();
+    evt.target.checked = true;
+    this.#newAvailableOffers = getAvailableOffers(evt.target.value, this.#allOffers);
+    this.updateElement({
+      availableOffers: this.#newAvailableOffers,
+      offers: [],
+      type: evt.target.value,
+    });
+  };
+
+  static convertPointToState = (point) =>({...point, offers: point.offers.slice()});
+  static convertStateToPoint =(state) =>{
+    const point = {...state};
+    delete point.availableOffers;
+    return point;
+  };
 }

@@ -37,9 +37,9 @@ export default class PointPresenter {
     this.#pointEditFormComponent = new PointEditFormView(point, offers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
-    this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
-
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#pointEditFormComponent.setFormResetHandler(this.#handleFormReset);
 
     if (prevPointComponent === null || prevPointEditFormComponent === null) {
       render(this.#pointComponent, this.#pointsListContainer);
@@ -50,16 +50,9 @@ export default class PointPresenter {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    // if (this.#pointsListContainer.contains(prevPointComponent.element)) {
-    // }
-
     if (this.#mode === Mode.EDITING) {
       replace(this.#pointEditFormComponent, prevPointEditFormComponent);
     }
-
-    // if (this.#pointsListContainer.contains(prevPointEditFormComponent.element)) {
-    //   replace(this.#pointEditFormComponent, prevPointEditFormComponent);
-    // }
 
     remove(prevPointComponent);
     remove(prevPointEditFormComponent);
@@ -93,6 +86,7 @@ export default class PointPresenter {
   #escArrowUpKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 'ArrowUp' || evt.keyCode === 38){
       evt.preventDefault();
+      this.#pointEditFormComponent.reset(this.#point);
       this.#replaceFormToItem();
     }
   };
@@ -101,8 +95,14 @@ export default class PointPresenter {
     this.#replaceItemToForm();
   };
 
+
   #handleFormSubmit = (point) =>{
     this.#changeData(point);
+    this.#replaceFormToItem();
+  };
+
+  #handleFormReset = () =>{
+    this.#pointEditFormComponent.reset(this.#point);
     this.#replaceFormToItem();
   };
 

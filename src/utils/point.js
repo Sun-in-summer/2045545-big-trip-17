@@ -34,7 +34,7 @@ const countDuration = (dateTo, dateFrom) => {
   return durationTotal;
 };
 
-const formatToDateAndTime = (date) => dayjs(date).format('YY[/]MM[/]DD HH:mm');
+const formatToDateAndTime = (date) => dayjs(date).format('DD[/]MM[/]YY HH:mm');
 
 const pickPhotos = (DestinationPhotos ,destionationForPhoto) => {
   for (let i =0 ; i < DestinationPhotos.length; i++) {
@@ -61,7 +61,7 @@ const generateDateTime = (negativeMinutesGap) => {
   return generateNextDate(date, negativeMinutesGap);
 };
 
-const convertToDatetimeFormat =(date) => dayjs(date).format('YYYY-MM-DD');
+const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 
 const getAvailableOffers =(chosenType, arr)=> {
   const offers = arr.find((offer)=> offer.type === chosenType);
