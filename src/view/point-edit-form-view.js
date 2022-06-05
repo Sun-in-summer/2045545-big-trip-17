@@ -30,7 +30,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       offersItems = availableOffers.map((item) =>{
         const checked = point.offers.includes(item.id) ? 'checked' : '';
         return `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" data-offer-type=${item.id} ${checked}>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${item.id}-1" type="checkbox" name="event-offer-${item.id}" data-offer-type="${item.id}" ${checked}>
                 <label class="event__offer-label" for="event-offer-${item.id}-1">
                   <span class="event__offer-title">${item.title}</span>
                   +€&nbsp;
@@ -334,11 +334,7 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #offerChangeHandler =(evt) =>{
     evt.preventDefault();
-    // const offerName = parseInt(evt.target.name.slice(12), 10);
-    console.log(typeof(parseInt(evt.target.name.slice(12), 10)));
-    console.log(typeof(evt.target.dataset.offerType));
     const offerName = +evt.target.dataset.offerType;
-    console.log(offerName);
     const offerIndex = this._state.offers.indexOf(offerName);
     if (offerIndex !== -1) {
       this._state.offers.splice(offerIndex, 1);
