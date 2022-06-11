@@ -65,8 +65,15 @@ const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 
 const getAvailableOffers =(chosenType, arr)=> {
   const offers = arr.find((offer)=> offer.type === chosenType);
-  const availableOffers = Object.values(offers.offers);
+  let availableOffers = null;
+  // if (offers) {
+  availableOffers = Object.values(offers.offers);
+  // }
+  // else {
+  //   availableOffers = [];
+  // }
   return  availableOffers;
+
 };
 
 
@@ -99,6 +106,8 @@ const sortPointDateDown = (pointA, pointB) => {
 
 const sortPointPriceDown = (pointA, pointB) => (pointB.basePrice-pointA.basePrice);
 
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 
 export {
   humanizePointDate,
@@ -113,6 +122,7 @@ export {
   isPastPoint,
   isFuturePoint,
   sortPointDateDown,
-  sortPointPriceDown
+  sortPointPriceDown,
+  isDatesEqual,
 };
 
