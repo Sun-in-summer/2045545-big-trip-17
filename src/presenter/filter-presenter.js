@@ -40,7 +40,7 @@ export default class FilterPresenter {
 
   init = () => {
     const filters = this.filters;
-    console.log(' инит ');
+
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
@@ -53,6 +53,7 @@ export default class FilterPresenter {
     replace(this.#filterComponent, this.#filterContainer);
     remove(prevFilterComponent);
 
+
   };
 
 
@@ -63,31 +64,19 @@ export default class FilterPresenter {
     this.#filterModel.setFilter(UpdateType.MINOR, filterType);
   };
 
-  // update = () => {
-  //   const filters = this.filters;
-  //   const prevFilterComponent = this.#filterComponent;
-  //   console.log('prevFilterComponent'+this.#filter);
+  update = () => {
+    const filters = this.filters;
 
-  //   this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
-  //   this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+    const prevFilterComponent = document.querySelector('.trip-filters');
+    prevFilterComponent.remove();
 
-  //   if (prevFilterComponent === null ){
-  //     render(this.#filterComponent, this.#filterContainer);
-  //     return;
-  //   }
-  //   replace(this.#filterComponent, this.#filterContainer);
-  //   remove(prevFilterComponent);
-  // };
+    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
+    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
-
-  destroy = () => {
-    console.log(this.#filterComponent);
-    if (this.#filterComponent === null) {
-      return;
-    }
-    remove(this.#filterComponent);
-    this.#filterComponent = null;
+    render(this.#filterComponent, this.#filterContainer);
   };
+
+
 }
 
 

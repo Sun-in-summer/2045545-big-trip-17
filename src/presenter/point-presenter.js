@@ -117,7 +117,7 @@ export default class PointPresenter {
         updateType = UpdateType.PATCH;
       }
     }
-    console.log('updateType'+updateType);
+
     this.#changeData(
       UserAction.UPDATE_POINT,
       updateType,
