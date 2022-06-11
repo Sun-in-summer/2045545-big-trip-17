@@ -76,7 +76,6 @@ export default class FilterPresenter {
     render(this.#filterComponent, this.#filterContainer);
   };
 
-
 }
 
 

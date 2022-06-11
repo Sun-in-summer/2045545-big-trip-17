@@ -127,15 +127,6 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        console.log('сработал мажор');
-        // const filterComponent = document.querySelector('.trip-filters');
-        // console.log('filterComponent' +filterComponent);
-        // if (filterComponent) {
-        //   console.log('попадаем в удаление');
-        //   document.querySelector('.trip-filters').remove();
-        //   console.log('удалили');
-
-        // }
         this.#filterPresenter.update();
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
