@@ -1,5 +1,6 @@
 import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import InfoPresenter from './presenter/info-presenter.js';
 import PointModel from './model/point-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
@@ -16,7 +17,7 @@ const newPointButton = document.querySelector('.trip-main__event-add-btn');
 
 
 const points = generatePoints();
-const allOffers =OFFERS.slice();
+const allOffers = OFFERS.slice();
 
 
 const pointModel = new PointModel(points);
@@ -25,6 +26,7 @@ const filterModel = new FilterModel();
 
 const filterPresenter = new FilterPresenter(siteTripControlsFilters, filterModel, pointModel);
 const boardPresenter = new  BoardPresenter(sitePointsElement, siteHeaderMainElement, pointModel, offersModel, filterModel);
+const infoPresenter = new InfoPresenter(siteHeaderMainElement, filterModel, pointModel, allOffers);
 
 const handleNewPointFormClose = () => {
   newPointButton.disabled = false;
@@ -40,5 +42,6 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', ha
 
 filterPresenter.init();
 boardPresenter.init();
+infoPresenter.init();
 
 

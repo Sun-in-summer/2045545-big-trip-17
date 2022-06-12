@@ -7,18 +7,8 @@ import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { defaultPoint } from '../const.js';
+import dayjs from 'dayjs';
 
-
-// const defaultPoint = {
-//   basePrice: '987',
-//   dateFrom:'2022-07-10T10:55:56.845Z',
-//   dateTo: '2022-07-12T10:56:13.375Z',
-//   destination: 'Amsterdam',
-//   type:'flight',
-//   offers : [],
-// };
-
-// const defaltAllOffers =[];
 
 const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton) => {
 
@@ -102,6 +92,11 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
   const destinationSection = createDestinationSection();
 
+  const createDestinationsDatalist = () =>  Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
+
+
+  const destinationsDatalist = createDestinationsDatalist(); //
+
 
   return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -170,11 +165,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
                     <datalist id="destination-list-1" >
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
-                      <option value="Moscow"></option>
-                      <option value="Beijing"></option>
+                      ${destinationsDatalist}
                     </datalist>
                   </div>
 
@@ -272,7 +263,9 @@ export default class PointEditFormView extends AbstractStatefulView {
   };
 
   setCancelClickHandler = (callback) => {
-
+    if (!this.#isCancelButton) {
+      return;  //
+    }
     this._callback.cancelClick = callback;
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#cancelClickHandler);
   };
@@ -300,15 +293,23 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #dateFromPeriodChangeHandler = ([userDate]) => {
     this.updateElement({
-      dateFrom: userDate,
+      dateFrom: dayjs(userDate),
     });
   };
 
   #dateToPeriodChangeHandler = ([userDate]) => {
     this.updateElement({
-      dateTo: userDate,
+      dateTo: dayjs(userDate),
     });
   };
+
+  #checkNegativeDuration = () => {
+    const dateToLaterThenDateFrom =dayjs(this._state.dateFrom).isAfter(this._state.dateTo, 'd');
+    if (dateToLaterThenDateFrom) {
+      this.#datepickerTo.open();
+    }
+  };
+
 
   #setDatepickerFrom = () => {
     this.#datepickerFrom = flatpickr(
@@ -319,10 +320,11 @@ export default class PointEditFormView extends AbstractStatefulView {
         // eslint-disable-next-line camelcase
         time_24hr: true,
         defaultDate: this._state.dateFrom.$d,
-        onClose: this.#dateFromPeriodChangeHandler,
+        onClose: [this.#dateFromPeriodChangeHandler, this.#checkNegativeDuration],
       },
     );
   };
+
 
   #setDatepickerTo = () => {
     this.#datepickerTo = flatpickr(

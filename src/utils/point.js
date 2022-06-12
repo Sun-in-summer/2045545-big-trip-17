@@ -107,6 +107,7 @@ const sortPointDateDown = (pointA, pointB) => {
 const sortPointPriceDown = (pointA, pointB) => (pointB.basePrice-pointA.basePrice);
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+const isMonthEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'M');
 
 
 export {
@@ -124,5 +125,6 @@ export {
   sortPointDateDown,
   sortPointPriceDown,
   isDatesEqual,
+  isMonthEqual
 };
 

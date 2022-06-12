@@ -15,27 +15,15 @@ export default class FilterPresenter {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#pointModel = pointModel;
+    this.#pointModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+
   }
 
   get filters() {
     const points = this.#pointModel.points;
-    return [
-      {
-        type: FilterType.EVERYTHING,
-        name: 'EVERYTHING',
-        count: filter[FilterType.EVERYTHING](points).length,
-      },
-      {
-        type: FilterType.FUTURE,
-        name: 'FUTURE',
-        count: filter[FilterType.FUTURE](points).length,
-      },
-      {
-        type: FilterType.PAST,
-        name: 'PAST',
-        count: filter[FilterType.PAST](points).length,
-      },
-    ];
+    const filters = Object.values(FilterType);
+    return filters.map((type) => ({type, name: type, count: filter[type](points).length}));
   }
 
   init = () => {
@@ -50,7 +38,7 @@ export default class FilterPresenter {
       render(this.#filterComponent, this.#filterContainer);
       return;
     }
-    replace(this.#filterComponent, this.#filterContainer);
+    replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
 
 
@@ -62,20 +50,21 @@ export default class FilterPresenter {
       return;
     }
     this.#filterModel.setFilter(UpdateType.MINOR, filterType);
+
   };
 
-  update = () => {
-    const filters = this.filters;
 
-    const prevFilterComponent = document.querySelector('.trip-filters');
-    prevFilterComponent.remove();
-
-    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
-    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
-
-    render(this.#filterComponent, this.#filterContainer);
+  #handleModelEvent = (updateType ) =>{
+    switch (updateType) {
+      case UpdateType.PATCH:
+        break;
+      case UpdateType.MINOR:
+        break;
+      case UpdateType.MAJOR:
+        this.init();
+        break;
+    }
   };
-
 }
 
 
