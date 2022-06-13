@@ -1,6 +1,8 @@
 import PointView from '../view/point-view';
 import PointEditFormView from '../view/point-edit-form-view';
 import {render, replace, remove}  from '../framework/render';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual, isPastPoint, isFuturePoint } from '../utils/point';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -17,6 +19,7 @@ export default class PointPresenter {
   #changeData = null;
   #changeMode = null;
 
+
   #mode = Mode.DEFAULT;
 
 
@@ -24,6 +27,7 @@ export default class PointPresenter {
     this.#pointsListContainer =pointsListContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+
 
   }
 
@@ -39,7 +43,8 @@ export default class PointPresenter {
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    this.#pointEditFormComponent.setFormResetHandler(this.#handleFormReset);
+    // this.#pointEditFormComponent.setFormResetHandler(this.#handleFormReset);
+    this.#pointEditFormComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditFormComponent === null) {
       render(this.#pointComponent, this.#pointsListContainer);
@@ -96,19 +101,48 @@ export default class PointPresenter {
   };
 
 
-  #handleFormSubmit = (point) =>{
-    this.#changeData(point);
+  #handleFormSubmit = (update) =>{
+    let updateType = UpdateType.MAJOR;
+    const isMajorUpdate = !( ( isPastPoint(this.#point.dateFrom, this.#point.dateTo) && isPastPoint(update.dateFrom, update.dateTo) ) || (isFuturePoint(this.#point.dateFrom, this.#point.dateTo) && isFuturePoint(update.dateFrom, update.dateTo)));
+
+
+    if (!isMajorUpdate) {
+      const isMinorUpdate = !(isDatesEqual(this.#point.dateFrom, update.dateFrom) && isDatesEqual(this.#point.dateTo, update.dateTo));
+      if (isMinorUpdate) {
+
+        updateType = UpdateType.MINOR;
+      }
+      else {
+
+        updateType = UpdateType.PATCH;
+      }
+    }
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      updateType,
+      update
+    );
     this.#replaceFormToItem();
   };
 
-  #handleFormReset = () =>{
-    this.#pointEditFormComponent.reset(this.#point);
-    this.#replaceFormToItem();
-  };
 
   #handleFavoriteClick =() => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
+  #handleDeleteClick = (update) =>{
+
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      update
+    );
+    this.destroy();
+
+  };
 
 }

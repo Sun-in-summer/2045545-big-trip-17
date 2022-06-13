@@ -6,21 +6,14 @@ import {
 import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { defaultPoint } from '../const.js';
+import dayjs from 'dayjs';
 
 
-const defaultPoint = {
-  basePrice: '987',
-  dateFrom:'2022-07-10T10:55:56.845Z',
-  dateTo: '2022-07-12T10:56:13.375Z',
-  destination: 'Amsterdam',
-  type:'flight'
-};
-
-const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
+const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton) => {
 
   const formattedDateFrom = formatToDateAndTime(point.dateFrom);
   const formattedDateTo = formatToDateAndTime(point.dateTo);
-
   const availableOffers = getAvailableOffers(point.type, allOffers);
 
 
@@ -40,9 +33,9 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
       }).join(' ');
     }
 
-    let isVisible = true;
-    if (availableOffers.length === 0) {
-      isVisible = false;
+    let isVisible = false;
+    if (availableOffers.length > 0) {
+      isVisible = true;
     }
     return `<section class="event__section  event__section--offers" ${isVisible? '' : 'hidden'}>
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -98,6 +91,11 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
   };
 
   const destinationSection = createDestinationSection();
+
+  const createDestinationsDatalist = () =>  Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
+
+
+  const destinationsDatalist = createDestinationsDatalist(); //
 
 
   return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
@@ -167,11 +165,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
                     <datalist id="destination-list-1" >
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
-                      <option value="Moscow"></option>
-                      <option value="Beijing"></option>
+                      ${destinationsDatalist}
                     </datalist>
                   </div>
 
@@ -181,10 +175,10 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                     id = "event-start-time-1"
                     type = "text"
                     name = "event-start-time"
-                    value = "${formattedDateFrom}" >
+                    value = "${formattedDateFrom}" required>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formattedDateTo}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formattedDateTo}" required>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -196,7 +190,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers) => {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Cancel</button>
+                  <button class="event__reset-btn" type="reset">${isCancelButton? 'Cancel' : 'Delete'}</button>
                 </header><section class="event__details">${offersSection} ${destinationSection}</section></form></li>` );
 
 };
@@ -210,11 +204,13 @@ export default class PointEditFormView extends AbstractStatefulView {
   #oldChosenOffers = null;
   #datepickerFrom = null;
   #datepickerTo= null;
+  #isCancelButton = false;
 
 
-  constructor(point = defaultPoint, allOffers) {
+  constructor(point = defaultPoint, allOffers, isCancelButton) {
     super();
     this.#allOffers = allOffers;
+    this.#isCancelButton = isCancelButton;
     this._state = PointEditFormView.convertPointToState(point);
     this.#setInnerHandlers();
     this.#setDatepickerFrom();
@@ -223,7 +219,7 @@ export default class PointEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditFormTemplate(this._state, this.#allOffers);
+    return createPointEditFormTemplate(this._state, this.#allOffers, this.#isCancelButton);
   }
 
   removeElement = () => {
@@ -243,7 +239,8 @@ export default class PointEditFormView extends AbstractStatefulView {
   _restoreHandlers =() =>{
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setFormResetHandler(this._callback.formReset);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCancelClickHandler(this._callback.cancelClick);
     this.#setDatepickerFrom();
     this.#setDatepickerTo();
   };
@@ -260,10 +257,19 @@ export default class PointEditFormView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
-  setFormResetHandler = (callback) => {
-    this._callback.formReset = callback;
-    this.element.querySelector('form').addEventListener('reset', this.#formResetHandler);
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   };
+
+  setCancelClickHandler = (callback) => {
+    if (!this.#isCancelButton) {
+      return;  //
+    }
+    this._callback.cancelClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#cancelClickHandler);
+  };
+
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -273,22 +279,35 @@ export default class PointEditFormView extends AbstractStatefulView {
     this._callback.formSubmit(PointEditFormView.convertStateToPoint(this._state));
   };
 
-  #formResetHandler = (evt) => {
+
+  #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formReset();
+    this._callback.deleteClick(PointEditFormView.convertStateToPoint(this._state));
   };
+
+  #cancelClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.cancelClick(this.element.querySelector('form').reset());
+  };
+
 
   #dateFromPeriodChangeHandler = ([userDate]) => {
     this.updateElement({
-      dateFrom: userDate,
+      dateFrom: dayjs(userDate),
     });
-    this.element.querySelector('#event-end-time-1').click();
   };
 
   #dateToPeriodChangeHandler = ([userDate]) => {
     this.updateElement({
-      dateTo: userDate,
+      dateTo: dayjs(userDate),
     });
+  };
+
+  #checkNegativeDuration = () => {
+    const dateToLaterThenDateFrom =dayjs(this._state.dateFrom).isAfter(this._state.dateTo, 'd');
+    if (dateToLaterThenDateFrom) {
+      this.#datepickerTo.open();
+    }
   };
 
 
@@ -301,10 +320,11 @@ export default class PointEditFormView extends AbstractStatefulView {
         // eslint-disable-next-line camelcase
         time_24hr: true,
         defaultDate: this._state.dateFrom.$d,
-        onClose: this.#dateFromPeriodChangeHandler,
+        onClose: [this.#dateFromPeriodChangeHandler, this.#checkNegativeDuration],
       },
     );
   };
+
 
   #setDatepickerTo = () => {
     this.#datepickerTo = flatpickr(
@@ -320,7 +340,6 @@ export default class PointEditFormView extends AbstractStatefulView {
       },
     );
   };
-
 
   #setInnerHandlers = () =>{
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
@@ -365,7 +384,6 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   };
 
-
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     const oldDestination = this._state.destination;
@@ -384,7 +402,6 @@ export default class PointEditFormView extends AbstractStatefulView {
     }
   };
 
-
   #pointTypeChangeHandler = (evt) =>{
     evt.preventDefault();
     evt.target.checked = true;
@@ -396,10 +413,14 @@ export default class PointEditFormView extends AbstractStatefulView {
     });
   };
 
-  static convertPointToState = (point) =>({...point, offers: point.offers.slice()});
+
+  static convertPointToState = (point = defaultPoint) =>({...point, offers: point.offers.slice()});
+
+
   static convertStateToPoint =(state) =>{
     const point = {...state};
     delete point.availableOffers;
     return point;
   };
 }
+
