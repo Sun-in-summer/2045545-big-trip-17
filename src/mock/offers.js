@@ -38,7 +38,13 @@ const OFFERS = [
         'id': 2,
         'title': 'Add luggage',
         'price': 30
-      }
+      },
+      {
+        'id': 3,
+        'title': 'Add luggage',
+        'price': 30
+      },
+
     ]
   },
   {
@@ -76,12 +82,39 @@ const OFFERS = [
         'id': 2,
         'title': 'Add meal',
         'price': 30
+      },
+      {
+        'id': 3,
+        'title': 'Choose seats',
+        'price': 20
+      }, {
+        'id': 4,
+        'title': 'Add meal',
+        'price': 30
+      },
+      {
+        'id': 5,
+        'title': 'Choose seats',
+        'price': 20
+      }, {
+        'id': 6,
+        'title': 'Add meal',
+        'price': 30
       }
     ]
   },
   {
     'type': 'drive',
-    'offers': [ ]
+    'offers': [
+      {
+        'id': 1,
+        'title': 'Switch to business class',
+        'price': 240
+      }, {
+        'id': 2,
+        'title': 'Get extra bonus miles',
+        'price': 10
+      },]
   },
   {
     'type': 'flight',

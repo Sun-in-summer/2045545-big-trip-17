@@ -36,7 +36,7 @@ const countDuration = (dateTo, dateFrom) => {
 
 const formatToDateAndTime = (date) => dayjs(date).format('DD[/]MM[/]YY HH:mm');
 
-const pickPhotos = (DestinationPhotos ,destionationForPhoto) => {
+const pickPhotos = (DestinationPhotos, destionationForPhoto) => {
   for (let i =0 ; i < DestinationPhotos.length; i++) {
     let chosenPhotos = [];
     if (DestinationPhotos[i].destination === destionationForPhoto){

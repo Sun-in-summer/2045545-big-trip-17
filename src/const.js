@@ -27,13 +27,16 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const defaultPoint = {
   basePrice: '987',
   dateFrom:'2022-07-10T10:55:56.845Z',
   dateTo: '2022-07-12T10:56:13.375Z',
-  destination: 'Amsterdam',
+  destination:  {
+    name:'Amsterdam'
+  },
   type:'flight',
   offers : [],
 };

@@ -4,9 +4,13 @@ import InfoPresenter from './presenter/info-presenter.js';
 import PointModel from './model/point-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
-import {generatePoints} from './mock/point.js';
+// import {generatePoints} from './mock/point.js';
 import {OFFERS} from './mock/offers.js';
+import PointsApiService from './api-services/points-api-service.js';
+import DestinationsApiService from './api-services/destinations-api-service.js'; //
 
+const AUTHORIZATION = 'Basic foi34430hg4r8';
+const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
 
 const siteMainElement = document.querySelector('.page-main');
 const siteHeaderMainElement = document.querySelector('.trip-main');
@@ -16,13 +20,15 @@ const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls_
 const newPointButton = document.querySelector('.trip-main__event-add-btn');
 
 
-const points = generatePoints();
+// const points = generatePoints();
 const allOffers = OFFERS.slice();
 
 
-const pointModel = new PointModel(points);
+const pointModel = new PointModel(new PointsApiService(END_POINT, AUTHORIZATION), new DestinationsApiService(END_POINT, AUTHORIZATION)); //удалить Destinations
+
 const offersModel =new OffersModel(allOffers);
 const filterModel = new FilterModel();
+
 
 const filterPresenter = new FilterPresenter(siteTripControlsFilters, filterModel, pointModel);
 const boardPresenter = new  BoardPresenter(sitePointsElement, siteHeaderMainElement, pointModel, offersModel, filterModel);
@@ -43,5 +49,6 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', ha
 filterPresenter.init();
 boardPresenter.init();
 infoPresenter.init();
+pointModel.init();
 
 

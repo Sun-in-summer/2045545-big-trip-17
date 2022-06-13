@@ -1,9 +1,9 @@
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
-  formatToDateAndTime, getAvailableOffers, pickPhotos
+  formatToDateAndTime, getAvailableOffers
 } from '../utils/point.js';
-import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
+import { DestinationDescriptions} from '../mock/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { defaultPoint } from '../const.js';
@@ -49,16 +49,16 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
 
   const createDestinationSection = () => {
-    const destinationDescription = DestinationDescriptions[point.destination];
-    const photos =pickPhotos(DestinationPhotos, point.destination);
-    const createPhotoWaysTemplate =(pickedPhotos) => {
+    const destinationDescription = (point['destination']['description'] !== null && point['destination']['description'] !== undefined) ? point['destination']['description'] : '' ;
+    const photos = point['destination']['photos'] !== null ? point['destination']['photos'] : [] ;
+    const createPhotoWaysTemplate =(destinationPhotos) => {
       let photoWays ='';
-      if (pickedPhotos.length === 0) {
+      if ( point['destination']['photos'] === undefined ||  Object.keys(point['destination']['photos']).length === 0 ) {
         return photoWays;
       }
       else {
-        for (const pickedPhoto of pickedPhotos){
-          photoWays +=  `<img class="event__photo" src=${pickedPhoto} alt="Event photo">`;
+        for (const photo of destinationPhotos){
+          photoWays +=  `<img class="event__photo" src="${photo['src']}" alt="${photo['description']}">`;
         }
       }
       return photoWays;
@@ -68,7 +68,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
 
     const createDestionationPhotoTemplate = (pickedPhotos) => {
-      if (pickedPhotos.length === 0) {
+      if (pickedPhotos === undefined  || pickedPhotos.length === 0 ) {
         return '';
       }
       else  {
@@ -83,6 +83,10 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
     const photosContainerTemplate =createDestionationPhotoTemplate(photos);
 
+    if (destinationDescription === '' && photosTemplate === '') {
+      return '';
+    }
+
     return (`<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${destinationDescription}</p>
@@ -92,7 +96,10 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
   const destinationSection = createDestinationSection();
 
-  const createDestinationsDatalist = () =>  Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
+
+  const createDestinationsDatalist = () =>   { // ПЕРЕДЕЛАТЬ!
+    Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
+  };
 
 
   const destinationsDatalist = createDestinationsDatalist(); //
@@ -163,7 +170,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-1" required>
                     <datalist id="destination-list-1" >
                       ${destinationsDatalist}
                     </datalist>
@@ -198,10 +205,10 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 export default class PointEditFormView extends AbstractStatefulView {
   #point  = null;
   #allOffers  = null;
-  #availableOffers = null;
+  // #availableOffers = null;
   #newAvailableOffers= null;
   #pointPrice = null;
-  #oldChosenOffers = null;
+  // #oldChosenOffers = null;
   #datepickerFrom = null;
   #datepickerTo= null;
   #isCancelButton = false;

@@ -4,7 +4,6 @@ import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
-// import InfoView from '../view/info-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
@@ -17,7 +16,6 @@ export default class BoardPresenter {
   #pointsListComponent = null;
   #noPointsComponent = null;
   #pointModel = null;
-  // #infoComponent = null;
   #offersModel = null;
   #filterModel = null;
 
@@ -25,7 +23,7 @@ export default class BoardPresenter {
 
   #pointPresenter = new Map();
   #newPointPresenter = null;
-  #filterPresenter = null;
+  // #filterPresenter = null;
 
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
@@ -44,7 +42,6 @@ export default class BoardPresenter {
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
     this.#newPointPresenter = new NewPointPresenter(this.#pointsListComponent.element, this.#handleViewAction);
-    // this.#infoComponent = new InfoView();
 
   }
 
@@ -62,7 +59,6 @@ export default class BoardPresenter {
   }
 
   init = () => {
-    // this.#renderInfo();
     this.#renderBoard();
   };
 
@@ -93,9 +89,6 @@ export default class BoardPresenter {
     render(this.#noPointsComponent, this.#pointsContainer);
   };
 
-  // #renderInfo = () => {
-  //   render(this.#infoComponent, this.#headerContainer, RenderPosition.AFTERBEGIN);
-  // };
 
   #handleModeChange =() => {
     this.#newPointPresenter.destroy();
@@ -159,19 +152,13 @@ export default class BoardPresenter {
 
   #renderBoard =() => {
     if (this.points.length === 0) {
-      // remove(this.#infoComponent);  разобраться!!!
       this.#renderNoPoints();
       return;
     }
     this.#renderSort();
-    // this.#renderInfo();
     render(this.#pointsListComponent, this.#pointsContainer);
     this.points.forEach((point) => this.#renderPoint(point, this.#allOffers));
   };
 
-
-  // #handlePointChange = (updatedPoint) =>{
-  //   this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#allOffers);
-  // };
 
 }

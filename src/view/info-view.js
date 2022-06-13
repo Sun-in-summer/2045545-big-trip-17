@@ -8,15 +8,15 @@ const MIDDLE_OF_THREE = 1 ;
 
 const createInfoTemplate = (filteredPoints, allOffers) => {
 
-  if (filteredPoints === null) {
+  if (filteredPoints === null || ((Object.keys(filteredPoints)).length === 0 )) {
     return '<section></section>';
   }
 
   const firstPoint = filteredPoints[0];
   const lastPoint = filteredPoints[filteredPoints.length-1];
-  const firstDestination = firstPoint.destination;
+  const firstDestination = firstPoint.destination.name;
   const firstDateFrom= dayjs(firstPoint.dateFrom).format('MMM DD');
-  const lastDestination = lastPoint.destination;
+  const lastDestination = lastPoint.destination.name;
   let lastDateTo =  dayjs(lastPoint.dateTo).format('MMM DD');
   lastDateTo= isMonthEqual(firstDateFrom, lastDateTo) ? dayjs(lastPoint.dateTo).format('DD') : dayjs(lastPoint.dateTo).format('MMM DD');
 
@@ -51,7 +51,7 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
   const findMiddleDestination = () => {
     if (filteredPoints.length === MAX_POINTS_QUANTITY_TO_DISPLAY_MIDDLE) {
-      return  filteredPoints[MIDDLE_OF_THREE].destination;
+      return  filteredPoints[MIDDLE_OF_THREE].destination.name;
     }
     return '...';
   };
