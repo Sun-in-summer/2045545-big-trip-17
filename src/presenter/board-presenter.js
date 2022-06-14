@@ -28,11 +28,11 @@ export default class BoardPresenter {
 
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
-  #isCancelButton = false ;
+  #isCancelButton = null ;
   #destinations = null;
 
 
-  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel, isCancelButton) {//destinationsModel добавляла - удалить?
+  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel) {//destinationsModel добавляла - удалить?
     this.#pointModel = pointModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
@@ -42,7 +42,7 @@ export default class BoardPresenter {
     this.#pointsListComponent = new PointsListView();
     this.#allOffers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];//
-    this.#isCancelButton = isCancelButton;//
+    this.#isCancelButton = false;//
 
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -53,7 +53,6 @@ export default class BoardPresenter {
   get points () {
     this.#filterType =this.#filterModel.filter;
     const points =this.#pointModel.points;
-    console.log(points);
     const filteredPoints = filter[this.#filterType](points);
     switch (this.#currentSortType) {
       case SortType.PRICE_DOWN:
@@ -76,8 +75,8 @@ export default class BoardPresenter {
   createPoint = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#isCancelButton = true;
-    this.#newPointPresenter.init(callback, this.#allOffers, this.#isCancelButton, this.destinations);
+    const isCancelButton = true;
+    this.#newPointPresenter.init(callback, this.#allOffers, isCancelButton, this.destinations);
   };
 
   #handleSortTypeChange =(sortType) =>{
@@ -123,7 +122,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data ) =>{
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenter.get(data.id).init(data, this.#allOffers, this.#destinations); // 1 last delete?
+        this.#pointPresenter.get(data.id).init(data, this.#allOffers, this.#isCancelButton, this.#destinations); // 1 last delete?
         break;
       case UpdateType.MINOR:
 

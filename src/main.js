@@ -26,6 +26,7 @@ const allOffers = OFFERS.slice();
 
 const pointModel = new PointModel(new PointsApiService(END_POINT, AUTHORIZATION));
 const destinationsModel = new DestinationsModel(new DestinationsApiService(END_POINT, AUTHORIZATION));
+
 destinationsModel.init();//
 
 

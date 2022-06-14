@@ -308,12 +308,12 @@ export default class PointEditFormView extends AbstractStatefulView {
     });
   };
 
-  #checkNegativeDuration = () => {
-    const dateToLaterThenDateFrom =dayjs(this._state.dateFrom).isAfter(this._state.dateTo, 'd');
-    if (dateToLaterThenDateFrom) {
-      this.#datepickerTo.open();
-    }
-  };
+  // #checkNegativeDuration = () => {
+  //   const dateToLaterThenDateFrom =dayjs(this._state.dateFrom).isAfter(this._state.dateTo, 'd');
+  //   if (dateToLaterThenDateFrom) {
+  //     this.#datepickerTo.open();
+  //   }
+  // };
 
 
   #setDatepickerFrom = () => {
@@ -325,7 +325,7 @@ export default class PointEditFormView extends AbstractStatefulView {
         // eslint-disable-next-line camelcase
         time_24hr: true,
         defaultDate: this._state.dateFrom.$d,
-        onClose: [this.#dateFromPeriodChangeHandler, this.#checkNegativeDuration],
+        onClose: [this.#dateFromPeriodChangeHandler],
       },
     );
   };
