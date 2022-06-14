@@ -18,36 +18,42 @@ export default class BoardPresenter {
   #pointModel = null;
   #offersModel = null;
   #filterModel = null;
+  #destinationsModel = null;
 
   #allOffers = null;
 
   #pointPresenter = new Map();
   #newPointPresenter = null;
-  // #filterPresenter = null;
+
 
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
   #isCancelButton = false ;
+  #destinations = null;
 
 
-  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel) {
+  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel, isCancelButton) {//destinationsModel добавляла - удалить?
     this.#pointModel = pointModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
+    this.#destinationsModel = destinationsModel; //
     this.#pointsContainer = pointsContainer;
     this.#headerContainer = headerContainer;
     this.#pointsListComponent = new PointsListView();
     this.#allOffers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];//
+    this.#isCancelButton = isCancelButton;//
 
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
     this.#newPointPresenter = new NewPointPresenter(this.#pointsListComponent.element, this.#handleViewAction);
-
   }
+
 
   get points () {
     this.#filterType =this.#filterModel.filter;
     const points =this.#pointModel.points;
+    console.log(points);
     const filteredPoints = filter[this.#filterType](points);
     switch (this.#currentSortType) {
       case SortType.PRICE_DOWN:
@@ -58,6 +64,11 @@ export default class BoardPresenter {
     return filteredPoints;
   }
 
+  get destinations () {
+    const destinations = this.#destinationsModel.destinations;
+    return destinations;
+  }
+
   init = () => {
     this.#renderBoard();
   };
@@ -66,7 +77,7 @@ export default class BoardPresenter {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#isCancelButton = true;
-    this.#newPointPresenter.init(callback, this.#allOffers, this.#isCancelButton);
+    this.#newPointPresenter.init(callback, this.#allOffers, this.#isCancelButton, this.destinations);
   };
 
   #handleSortTypeChange =(sortType) =>{
@@ -112,7 +123,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data ) =>{
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenter.get(data.id).init(data, this.#allOffers);
+        this.#pointPresenter.get(data.id).init(data, this.#allOffers, this.#destinations); // 1 last delete?
         break;
       case UpdateType.MINOR:
 
@@ -127,9 +138,9 @@ export default class BoardPresenter {
     }
   };
 
-  #renderPoint =(point, offers) => {
-    const pointPresenter =new PointPresenter(this.#pointsListComponent.element, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point, offers);
+  #renderPoint =(point, offers, isCancelButton, destinations) => {
+    const pointPresenter =new PointPresenter(this.#pointsListComponent.element, this.#handleViewAction, this.#handleModeChange, this.#pointModel);
+    pointPresenter.init(point, offers, isCancelButton, destinations);
     this.#pointPresenter.set(point.id, pointPresenter);
 
   };
@@ -157,7 +168,7 @@ export default class BoardPresenter {
     }
     this.#renderSort();
     render(this.#pointsListComponent, this.#pointsContainer);
-    this.points.forEach((point) => this.#renderPoint(point, this.#allOffers));
+    this.points.forEach((point) => this.#renderPoint(point, this.#allOffers, this.#isCancelButton, this.destinations)); //
   };
 
 

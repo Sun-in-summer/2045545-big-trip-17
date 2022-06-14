@@ -40,6 +40,9 @@ const createPointTemplate = (point, allOffers) => {
   if ((offers.length !== 0)&& (availableOffers.length !==0)) {
     offersList = offers.map((el)=> {
       const foundOffer = availableOffers.find((offer) => offer.id === el);
+      if (!foundOffer) {
+        return '';
+      }
       const title =foundOffer.title;
       const price =foundOffer.price;
       return (`<li class="event__offer">

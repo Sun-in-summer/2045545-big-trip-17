@@ -10,7 +10,7 @@ import { defaultPoint } from '../const.js';
 import dayjs from 'dayjs';
 
 
-const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton) => {
+const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton, destinations) => {
 
   const formattedDateFrom = formatToDateAndTime(point.dateFrom);
   const formattedDateTo = formatToDateAndTime(point.dateTo);
@@ -97,12 +97,10 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
   const destinationSection = createDestinationSection();
 
 
-  const createDestinationsDatalist = () =>   { // ПЕРЕДЕЛАТЬ!
-    Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
-  };
+  const createDestinationsDatalist = () =>  (Object.values(destinations).map((el) => (`<option value=${el}></option>`)).join(''));
 
 
-  const destinationsDatalist = createDestinationsDatalist(); //
+  const destinationsDatalist = createDestinationsDatalist();
 
 
   return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
@@ -205,19 +203,19 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 export default class PointEditFormView extends AbstractStatefulView {
   #point  = null;
   #allOffers  = null;
-  // #availableOffers = null;
   #newAvailableOffers= null;
   #pointPrice = null;
-  // #oldChosenOffers = null;
   #datepickerFrom = null;
   #datepickerTo= null;
   #isCancelButton = false;
+  #destinations =null;//
 
 
-  constructor(point = defaultPoint, allOffers, isCancelButton) {
+  constructor(point = defaultPoint, allOffers, isCancelButton, destinations) {//
     super();
     this.#allOffers = allOffers;
     this.#isCancelButton = isCancelButton;
+    this.#destinations = destinations; //
     this._state = PointEditFormView.convertPointToState(point);
     this.#setInnerHandlers();
     this.#setDatepickerFrom();
@@ -226,7 +224,7 @@ export default class PointEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditFormTemplate(this._state, this.#allOffers, this.#isCancelButton);
+    return createPointEditFormTemplate(this._state, this.#allOffers, this.#isCancelButton, this.#destinations);//
   }
 
   removeElement = () => {

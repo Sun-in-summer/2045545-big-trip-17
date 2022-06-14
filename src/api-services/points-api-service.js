@@ -25,7 +25,7 @@ export default class PointsApiService extends ApiService {
   };
 
   #adaptToServer = (point) =>{
-    console.log(point.dateFrom instanceof Date);
+    console.log(point.dateFrom instanceof Date); // проверить тип дат
     const adaptedPoint = {...point,
       'date_from': point.dateFrom ,
       'date_to': point.dateTo,

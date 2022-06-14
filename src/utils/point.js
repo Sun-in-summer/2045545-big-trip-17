@@ -66,36 +66,19 @@ const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 const getAvailableOffers =(chosenType, arr)=> {
   const offers = arr.find((offer)=> offer.type === chosenType);
   let availableOffers = null;
-  // if (offers) {
-  availableOffers = Object.values(offers.offers);
-  // }
-  // else {
-  //   availableOffers = [];
-  // }
+  if (offers) {
+    availableOffers = Object.values(offers.offers);
+  }
+  else {
+    availableOffers = [];
+  }
   return  availableOffers;
-
 };
 
 
 const isPastPoint = (dateFrom, dateTo) => (dateFrom && dayjs().isAfter(dateFrom, 'D')) && (dateTo && dayjs().isAfter(dateTo, 'D'));
 const isFuturePoint =(dateFrom, dateTo) => (dateFrom && dayjs().isBefore(dateFrom, 'D')) && (dateTo && dayjs().isBefore(dateTo, 'D')) ;
 
-
-// const getWeightForNullDate = (dateA, dateB) => {
-//   if (dateA === null && dateB === null) {
-//     return 0;
-//   }
-
-//   if (dateA === null) {
-//     return 1;
-//   }
-
-//   if (dateB === null) {
-//     return -1;
-//   }
-
-//   return null;
-// };
 
 const sortPointDateDown = (pointA, pointB) => {
   const pointADuration= dayjs.duration(pointA.dateTo.diff(pointA.dateFrom));

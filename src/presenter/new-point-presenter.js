@@ -14,6 +14,7 @@ export default class NewPointPresenter {
 
   #destroyCallback = null;
   #isCancelButton = null;
+  #destinations = null; //
 
 
   constructor (pointsListContainer, changeData) {
@@ -21,11 +22,11 @@ export default class NewPointPresenter {
     this.#changeData = changeData;
   }
 
-  init =(callback, allOffers, allPoints, isCancelButton) =>{
+  init =(callback, allOffers, isCancelButton, destinations) =>{ //
     this.#destroyCallback = callback;
     this.#allOffers = allOffers;
-    this.#allPoints = allPoints;
     this.#isCancelButton = isCancelButton;
+    this.#destinations = destinations; //
 
 
     if (this.#pointEditFormComponent !== null) {
@@ -33,7 +34,7 @@ export default class NewPointPresenter {
     }
 
 
-    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#allPoints, this.#isCancelButton);
+    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#isCancelButton, this.#destinations);//
 
     this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditFormComponent.setCancelClickHandler(this.#handleCancelClick);

@@ -4,6 +4,7 @@ import InfoPresenter from './presenter/info-presenter.js';
 import PointModel from './model/point-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
+import DestinationsModel from './model/destinations-model.js';
 // import {generatePoints} from './mock/point.js';
 import {OFFERS} from './mock/offers.js';
 import PointsApiService from './api-services/points-api-service.js';
@@ -20,18 +21,20 @@ const siteTripControlsFilters = siteHeaderElement.querySelector('.trip-controls_
 const newPointButton = document.querySelector('.trip-main__event-add-btn');
 
 
-// const points = generatePoints();
 const allOffers = OFFERS.slice();
 
 
-const pointModel = new PointModel(new PointsApiService(END_POINT, AUTHORIZATION), new DestinationsApiService(END_POINT, AUTHORIZATION)); //удалить Destinations
+const pointModel = new PointModel(new PointsApiService(END_POINT, AUTHORIZATION));
+const destinationsModel = new DestinationsModel(new DestinationsApiService(END_POINT, AUTHORIZATION));
+destinationsModel.init();//
+
 
 const offersModel =new OffersModel(allOffers);
 const filterModel = new FilterModel();
 
 
 const filterPresenter = new FilterPresenter(siteTripControlsFilters, filterModel, pointModel);
-const boardPresenter = new  BoardPresenter(sitePointsElement, siteHeaderMainElement, pointModel, offersModel, filterModel);
+const boardPresenter = new  BoardPresenter(sitePointsElement, siteHeaderMainElement, pointModel, offersModel, filterModel, destinationsModel);
 const infoPresenter = new InfoPresenter(siteHeaderMainElement, filterModel, pointModel, allOffers);
 
 const handleNewPointFormClose = () => {

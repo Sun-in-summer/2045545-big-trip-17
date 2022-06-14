@@ -3,19 +3,12 @@ import Observable from '../framework/observable.js';
 import {UpdateType} from '../const.js';
 export default class PointModel extends Observable {
   #pointsApiService = null;
-  #destinationsApiService = null; //
   #points = [];
 
-  constructor(pointsApiService, destinationsApiService) { //delete destinationsApiService
+
+  constructor(pointsApiService) {
     super();
     this.#pointsApiService = pointsApiService;
-    this.#destinationsApiService = destinationsApiService;
-
-    this.#destinationsApiService.destinations.then((destinations) => {
-      const destinationsList= destinations.map((destination) =>destination.name);
-      return destinationsList;
-    });
-
   }
 
 
@@ -24,6 +17,7 @@ export default class PointModel extends Observable {
   }
 
   init = async () => {
+
     try {
       const points = await this.#pointsApiService.points;
       this.#points = points.map(this.#adaptToClient);
