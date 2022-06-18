@@ -16,6 +16,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
   const formattedDateTo = formatToDateAndTime(point.dateTo);
   const availableOffers = getAvailableOffers(point.type, allOffers);
   const destinationNames = destinations.map((destination) => destination.name);
+  console.log(destinationNames);
 
 
   const createOffersSection = ( ) => {
@@ -98,7 +99,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
   const destinationSection = createDestinationSection();
 
 
-  const createDestinationsDatalist = () => (destinationNames.map((el) => (`<option value=${el}></option>`)).join(''));
+  const createDestinationsDatalist = () => (destinationNames.map((el) => (`<option value="${el}"></option>`)).join(''));
 
 
   const destinationsDatalist = createDestinationsDatalist();
