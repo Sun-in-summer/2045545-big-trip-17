@@ -50,8 +50,8 @@ export default class PointsApiService extends ApiService {
     const adaptedPoint = {...point,
       'date_from': point.dateFrom ,
       'date_to': point.dateTo,
-      'base_price': point.basePrice,
-      'is_favorite': point.isFavorite,
+      'base_price': +point.basePrice,
+      'is_favorite': (point.isFavorite || false),
       'destination': {...point['destination'],
         pictures: point['destination']['photos'],
       }

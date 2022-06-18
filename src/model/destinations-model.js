@@ -1,5 +1,5 @@
 export default class DestinationsModel  {
-  #destinationsApiService = null; //
+  #destinationsApiService = null;
   #destinations =[];
 
   constructor(destinationsApiService) {
@@ -12,10 +12,9 @@ export default class DestinationsModel  {
 
   init = async () => {
     try {
-      // const destinations = await this.#destinationsApiService.destinations;
-      // this.#destinations = destinations.map((destination) =>destination.name);
       const destinations = await this.#destinationsApiService.destinations;
       this.#destinations = destinations.map(this.#adaptToClient);
+      console.log('destinations');
     } catch(err) {
       this.#destinations = [];
     }

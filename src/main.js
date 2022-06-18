@@ -6,12 +6,11 @@ import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
 import DestinationsModel from './model/destinations-model.js';
 import PointsApiService from './api-services/points-api-service.js';
-import DestinationsApiService from './api-services/destinations-api-service.js'; //
+import DestinationsApiService from './api-services/destinations-api-service.js';
 import OffersApiService from './api-services/offers-api-services.js';
-// import { render } from './framework/render.js';
 
 
-const AUTHORIZATION = 'Basic foi34430hg4r8';
+const AUTHORIZATION = 'Basic foi34430ferqtterthg4r8';
 const END_POINT = 'https://17.ecmascript.pages.academy/big-trip';
 
 
@@ -44,16 +43,14 @@ const handleNewPointButtonClick = () =>{
   newPointButton.disabled = true;
 };
 
-
-filterPresenter.init();
-boardPresenter.init();
-infoPresenter.init();
+offersModel.init();
+destinationsModel.init();
 pointModel.init()
   .finally(()=>{
     newPointButton.disabled = false;
     newPointButton.addEventListener('click', handleNewPointButtonClick);
   });
-destinationsModel.init();//
-offersModel.init();
 
-
+filterPresenter.init();
+boardPresenter.init();
+infoPresenter.init();

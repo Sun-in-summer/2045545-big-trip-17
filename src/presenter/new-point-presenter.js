@@ -11,7 +11,7 @@ export default class NewPointPresenter {
   #allOffers  = null;
   #destroyCallback = null;
   #isCancelButton = null;
-  #destinations = null; //
+  #destinations = null;
 
 
   constructor (pointsListContainer, changeData) {
@@ -19,19 +19,18 @@ export default class NewPointPresenter {
     this.#changeData = changeData;
   }
 
-  init =(callback, allOffers, isCancelButton, destinations) =>{ //
+  init =(callback, allOffers, isCancelButton, destinations) =>{
     this.#destroyCallback = callback;
     this.#allOffers = allOffers;
     this.#isCancelButton = isCancelButton;
-    this.#destinations = destinations; //
-
+    this.#destinations = destinations;
 
     if (this.#pointEditFormComponent !== null) {
       return;
     }
 
 
-    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#isCancelButton, this.#destinations);//
+    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#isCancelButton, this.#destinations);
 
     this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditFormComponent.setCancelClickHandler(this.#handleCancelClick);
@@ -55,6 +54,24 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving = () => {
+    this.#pointEditFormComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () =>{
+    const resetFormState = () => {
+      this.#pointEditFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#pointEditFormComponent.shake(resetFormState);
+  };
+
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc' ){
@@ -71,7 +88,6 @@ export default class NewPointPresenter {
       UpdateType.MAJOR,
       point,
     );
-    this.destroy();
   };
 
   #handleCancelClick =() => {

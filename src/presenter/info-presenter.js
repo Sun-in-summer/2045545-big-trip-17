@@ -1,5 +1,4 @@
 import {remove, render, replace, RenderPosition} from '../framework/render.js';
-// import {UpdateType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import InfoView from '../view/info-view';
 

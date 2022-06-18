@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const ALL_POINTS = 'EVERYTHING';
 const ONLY_FUTURE_POINTS = 'FUTURE';
 const ONLY_PAST_POINTS = 'PAST';
@@ -31,11 +33,13 @@ const UpdateType = {
 };
 
 const defaultPoint = {
-  basePrice: '987',
-  dateFrom:'2022-07-10T10:55:56.845Z',
-  dateTo: '2022-07-12T10:56:13.375Z',
+  basePrice: 10,
+  dateFrom: dayjs(),
+  dateTo: dayjs().add(7, 'day'),
   destination:  {
-    name:'Amsterdam'
+    name:'',
+    description: '',
+    photos: []
   },
   type:'flight',
   offers : [],
