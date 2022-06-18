@@ -9,14 +9,12 @@ export default class InfoPresenter {
   #pointModel = null;
   #infoComponent = null;
   #filterType = null;
-  #offersModel = null;
 
 
-  constructor(infoContainer, filterModel, pointModel, offersModel) {
+  constructor(infoContainer, filterModel, pointModel) {
     this.#infoContainer = infoContainer;
     this.#filterModel = filterModel;
     this.#pointModel = pointModel;
-    this.#offersModel = offersModel;
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -29,7 +27,7 @@ export default class InfoPresenter {
   }
 
   get offers() {
-    const offers = this.#offersModel.offers;
+    const offers = this.#pointModel.offers;
     return offers;
   }
 

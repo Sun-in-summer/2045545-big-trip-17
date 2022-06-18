@@ -1,24 +1,24 @@
-export default class OffersModel {
-  #offersApiService = null;
-  #offers = [];
+// export default class OffersModel {
+//   #offersApiService = null;
+//   #offers = [];
 
-  constructor(offersApiService) {
-    this.#offersApiService = offersApiService;
+//   constructor(offersApiService) {
+//     this.#offersApiService = offersApiService;
 
-  }
+//   }
 
 
-  get offers() {
-    return this.#offers;
-  }
+//   get offers() {
+//     return this.#offers;
+//   }
 
-  init = async () => {
-    try {
-      this.#offers = await this.#offersApiService.offers;
-      console.log('offers');
-    } catch(err) {
-      this.#offers = [];
-    }
-  };
+//   init = async () => {
+//     try {
+//       this.#offers = await this.#offersApiService.offers;
+//       console.log('offers');
+//     } catch(err) {
+//       this.#offers = [];
+//     }
+//   };
 
-}
+// }

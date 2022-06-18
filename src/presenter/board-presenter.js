@@ -24,9 +24,9 @@ export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #noPointsComponent = null;
   #pointModel = null;
-  #offersModel = null;
+  // #offersModel = null;
   #filterModel = null;
-  #destinationsModel = null;
+  // #destinationsModel = null;
   #pointPresenter = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DEFAULT;
@@ -37,15 +37,12 @@ export default class BoardPresenter {
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
-  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel) {
+  constructor(pointsContainer, headerContainer, pointModel, filterModel) {
     this.#pointModel = pointModel;
-    this.#offersModel = offersModel;
     this.#filterModel = filterModel;
-    this.#destinationsModel = destinationsModel; //
     this.#pointsContainer = pointsContainer;
     this.#headerContainer = headerContainer;
     this.#pointsListComponent = new PointsListView();
-    this.#destinations = [...this.#destinationsModel.destinations];
     this.#isCancelButton = false;
 
     this.#pointModel.addObserver(this.#handleModelEvent);
@@ -68,12 +65,12 @@ export default class BoardPresenter {
   }
 
   get destinations () {
-    const destinations = this.#destinationsModel.destinations;
+    const destinations = this.#pointModel.destinations;
     return destinations;
   }
 
   get offers () {
-    const offers = this.#offersModel.offers;
+    const offers = this.#pointModel.offers;
     return offers;
   }
 

@@ -7,6 +7,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import {defaultPoint} from '../const.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 
 const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton, destinations) => {
@@ -184,7 +185,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-1" ${point.isDisabled? 'disabled' :''} required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(point.destination.name)}" list="destination-list-1" ${point.isDisabled? 'disabled' :''} required>
                     <datalist id="destination-list-1" >
                       ${destinationsDatalist}
                     </datalist>
