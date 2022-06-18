@@ -6,7 +6,6 @@ export default class OffersApiService extends ApiService {
     return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
   }
-
 }
 
 

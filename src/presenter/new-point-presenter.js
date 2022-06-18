@@ -1,7 +1,6 @@
 import PointEditFormView from '../view/point-edit-form-view';
 import {render, remove, RenderPosition}  from '../framework/render';
 import { UserAction, UpdateType } from '../const.js';
-import {nanoid} from 'nanoid';
 import { defaultPoint } from '../const.js';
 
 
@@ -10,8 +9,6 @@ export default class NewPointPresenter {
   #pointsListContainer = null;
   #changeData = null;
   #allOffers  = null;
-  #allPoints = null;//
-
   #destroyCallback = null;
   #isCancelButton = null;
   #destinations = null; //
@@ -72,7 +69,7 @@ export default class NewPointPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      {id: nanoid(), ...point},
+      point,
     );
     this.destroy();
   };

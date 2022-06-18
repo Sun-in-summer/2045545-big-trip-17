@@ -5,7 +5,7 @@ import {
   countDuration,
   convertToDatetimeFormat
 } from '../utils/point.js';
-import { getAvailableOffers } from '../mock/point.js';
+import { getAvailableOffers } from '../utils/point.js';
 
 const createPointTemplate = (point, allOffers) => {
   const {

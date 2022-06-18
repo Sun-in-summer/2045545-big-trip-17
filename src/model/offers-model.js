@@ -6,6 +6,7 @@ export default class OffersModel {
 
   constructor(offersApiService) {
     this.#offersApiService = offersApiService;
+
   }
 
 
@@ -16,7 +17,6 @@ export default class OffersModel {
   init = async () => {
     try {
       this.#offers = await this.#offersApiService.offers;
-      console.log(offers);
     } catch(err) {
       this.#offers = [];
     }

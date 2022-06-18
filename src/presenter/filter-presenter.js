@@ -8,7 +8,6 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #pointModel = null;
-
   #filterComponent = null;
 
   constructor(filterContainer, filterModel, pointModel) {
@@ -17,7 +16,6 @@ export default class FilterPresenter {
     this.#pointModel = pointModel;
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
   }
 
   get filters() {
@@ -41,7 +39,6 @@ export default class FilterPresenter {
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
 
-
   };
 
 
@@ -61,6 +58,9 @@ export default class FilterPresenter {
       case UpdateType.MINOR:
         break;
       case UpdateType.MAJOR:
+        this.init();
+        break;
+      case UpdateType.INIT:
         this.init();
         break;
     }

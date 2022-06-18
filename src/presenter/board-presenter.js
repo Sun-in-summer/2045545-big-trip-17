@@ -1,10 +1,11 @@
-import {remove, render} from '../framework/render.js';
+import {remove, render, RenderPosition} from '../framework/render.js';
 import { filter } from '../utils/filter.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
@@ -14,25 +15,22 @@ export default class BoardPresenter {
   #headerContainer = null;
   #sortComponent = null;
   #pointsListComponent = null;
+  #loadingComponent = new LoadingView();
   #noPointsComponent = null;
   #pointModel = null;
   #offersModel = null;
   #filterModel = null;
   #destinationsModel = null;
-
-  #allOffers = null;
-
   #pointPresenter = new Map();
   #newPointPresenter = null;
-
-
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
   #isCancelButton = null ;
   #destinations = null;
+  #isLoading = true;
 
 
-  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel) {//destinationsModel добавляла - удалить?
+  constructor(pointsContainer, headerContainer, pointModel, offersModel, filterModel, destinationsModel) {
     this.#pointModel = pointModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
@@ -40,7 +38,6 @@ export default class BoardPresenter {
     this.#pointsContainer = pointsContainer;
     this.#headerContainer = headerContainer;
     this.#pointsListComponent = new PointsListView();
-    this.#allOffers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];//
     this.#isCancelButton = false;//
 
@@ -68,15 +65,22 @@ export default class BoardPresenter {
     return destinations;
   }
 
+  get offers () {
+    const offers = this.#offersModel.offers;
+    return offers;
+  }
+
   init = () => {
     this.#renderBoard();
   };
 
   createPoint = (callback) => {
+    // const destinationsNames = this.destinations.map((destination) =>destination.name);
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    const isCancelButton = true;
-    this.#newPointPresenter.init(callback, this.#allOffers, isCancelButton, this.destinations);
+    this.#isCancelButton = true;
+    this.#newPointPresenter.init(callback, this.offers, this.#isCancelButton, this.destinations);
+    this.#isCancelButton = false;
   };
 
   #handleSortTypeChange =(sortType) =>{
@@ -91,7 +95,11 @@ export default class BoardPresenter {
   #renderSort = () =>{
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
-    render(this.#sortComponent, this.#pointsContainer);
+    render(this.#sortComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderLoading =() =>{
+    render(this.#loadingComponent, this.#pointsContainer);
   };
 
   #renderNoPoints = () => {
@@ -122,7 +130,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data ) =>{
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenter.get(data.id).init(data, this.#allOffers, this.#isCancelButton, this.#destinations); // 1 last delete?
+        this.#pointPresenter.get(data.id).init(data, this.offers, this.#isCancelButton, this.#destinations);
         break;
       case UpdateType.MINOR:
 
@@ -132,6 +140,11 @@ export default class BoardPresenter {
       case UpdateType.MAJOR:
 
         this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderBoard();
         break;
     }
@@ -151,6 +164,7 @@ export default class BoardPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
     }
@@ -161,14 +175,25 @@ export default class BoardPresenter {
 
 
   #renderBoard =() => {
-    if (this.points.length === 0) {
+    render(this.#pointsListComponent, this.#pointsContainer);
+
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    const points = this.points;
+    const pointCount = points.length;
+
+
+    if (pointCount === 0) {
       this.#renderNoPoints();
       return;
     }
     this.#renderSort();
-    render(this.#pointsListComponent, this.#pointsContainer);
-    this.points.forEach((point) => this.#renderPoint(point, this.#allOffers, this.#isCancelButton, this.destinations)); //
-  };
+    this.points.forEach((point) => this.#renderPoint(point, this.offers, this.#isCancelButton, this.destinations));
 
+  };
 
 }

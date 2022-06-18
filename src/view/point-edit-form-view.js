@@ -3,7 +3,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
   formatToDateAndTime, getAvailableOffers
 } from '../utils/point.js';
-import { DestinationDescriptions} from '../mock/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { defaultPoint } from '../const.js';
@@ -191,7 +190,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}" required>
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.basePrice}" required min="1">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -201,7 +200,6 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 };
 
 export default class PointEditFormView extends AbstractStatefulView {
-  #point  = null;
   #allOffers  = null;
   #newAvailableOffers= null;
   #pointPrice = null;
@@ -391,11 +389,18 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    const destinationsNames = this.#destinations.map((destination) =>destination.name);
     const oldDestination = this._state.destination;
     evt.target.checked = true;
-    if (Object.keys(DestinationDescriptions).includes(evt.target.value)) {
+    const newDestination = this.#destinations.filter((destination) => destination.name === evt.target.value)[0];
+    if (destinationsNames.includes(evt.target.value)) {
       this.updateElement({
-        destination: evt.target.value,
+        destination: {...this._state.destination,
+          name: newDestination.name,
+          description: newDestination.description,
+          photos: newDestination.photos,
+
+        },
       });
     }
     else {
@@ -419,12 +424,21 @@ export default class PointEditFormView extends AbstractStatefulView {
   };
 
 
-  static convertPointToState = (point = defaultPoint) =>({...point, offers: point.offers.slice()});
+  static convertPointToState = (point = defaultPoint) =>({...point,
+    offers: point.offers.slice(),
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
+  });
 
 
   static convertStateToPoint =(state) =>{
     const point = {...state};
     delete point.availableOffers;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
     return point;
   };
 }

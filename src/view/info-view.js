@@ -58,8 +58,7 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
   const middleDestination = findMiddleDestination();
 
-  const tripValue = totalBasePricesSum +  totalExtraChargesAllPoints; // добавить среднюю, добавить офферы
-
+  const tripValue = totalBasePricesSum +  totalExtraChargesAllPoints;
 
   return (`<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
@@ -77,8 +76,6 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
 export default class InfoView extends AbstractView{
 
-  #firstPoint = null;
-  #lastPoint = null;
   #filteredPoints = null;
   #allOffers = null;
 
