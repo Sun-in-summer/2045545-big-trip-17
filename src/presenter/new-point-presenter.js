@@ -3,7 +3,6 @@ import {render, remove, RenderPosition}  from '../framework/render';
 import { UserAction, UpdateType } from '../const.js';
 import { defaultPoint } from '../const.js';
 
-
 export default class NewPointPresenter {
   #pointEditFormComponent = null;
   #pointsListContainer = null;
@@ -34,7 +33,6 @@ export default class NewPointPresenter {
 
     this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditFormComponent.setCancelClickHandler(this.#handleCancelClick);
-
 
     render(this.#pointEditFormComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN );
 

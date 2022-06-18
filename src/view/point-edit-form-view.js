@@ -16,7 +16,6 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
   const formattedDateTo = formatToDateAndTime(point.dateTo);
   const availableOffers = getAvailableOffers(point.type, allOffers);
   const destinationNames = destinations.map((destination) => destination.name);
-  console.log(destinationNames);
 
 
   const createOffersSection = ( ) => {
@@ -86,7 +85,11 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
     const photosContainerTemplate =createDestionationPhotoTemplate(photos);
 
     if (destinationDescription === '' && photosTemplate === '') {
-      return '';
+      return `<section class="event__section  event__section--destination visually-hidden">
+                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${destinationDescription}</p>
+                    ${photosContainerTemplate}
+                  </section>`;
     }
 
     return (`<section class="event__section  event__section--destination">
