@@ -1,44 +1,38 @@
 import PointEditFormView from '../view/point-edit-form-view';
 import {render, remove, RenderPosition}  from '../framework/render';
 import { UserAction, UpdateType } from '../const.js';
-import {nanoid} from 'nanoid';
 import { defaultPoint } from '../const.js';
-
 
 export default class NewPointPresenter {
   #pointEditFormComponent = null;
   #pointsListContainer = null;
   #changeData = null;
   #allOffers  = null;
-
   #destroyCallback = null;
   #isCancelButton = null;
+  #destinations = null;
 
 
   constructor (pointsListContainer, changeData) {
     this.#pointsListContainer =pointsListContainer;
     this.#changeData = changeData;
-
-
   }
 
-  init =(callback, allOffers, isCancelButton) =>{
+  init =(callback, allOffers, isCancelButton, destinations) =>{
     this.#destroyCallback = callback;
     this.#allOffers = allOffers;
     this.#isCancelButton = isCancelButton;
-
+    this.#destinations = destinations;
 
     if (this.#pointEditFormComponent !== null) {
       return;
     }
 
 
-    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#isCancelButton);
+    this.#pointEditFormComponent = new PointEditFormView(defaultPoint, this.#allOffers, this.#isCancelButton, this.#destinations);
 
     this.#pointEditFormComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    // this.#pointEditFormComponent.setDeleteClickHandler(this.handleDeleteClick);
     this.#pointEditFormComponent.setCancelClickHandler(this.#handleCancelClick);
-
 
     render(this.#pointEditFormComponent, this.#pointsListContainer, RenderPosition.AFTERBEGIN );
 
@@ -58,6 +52,24 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving = () => {
+    this.#pointEditFormComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () =>{
+    const resetFormState = () => {
+      this.#pointEditFormComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#pointEditFormComponent.shake(resetFormState);
+  };
+
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc' ){
@@ -72,9 +84,8 @@ export default class NewPointPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      {id: nanoid(), ...point},
+      point,
     );
-    this.destroy();
   };
 
   #handleCancelClick =() => {

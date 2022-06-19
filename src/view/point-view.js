@@ -5,7 +5,7 @@ import {
   countDuration,
   convertToDatetimeFormat
 } from '../utils/point.js';
-import { getAvailableOffers } from '../mock/point.js';
+import { getAvailableOffers } from '../utils/point.js';
 
 const createPointTemplate = (point, allOffers) => {
   const {
@@ -40,6 +40,9 @@ const createPointTemplate = (point, allOffers) => {
   if ((offers.length !== 0)&& (availableOffers.length !==0)) {
     offersList = offers.map((el)=> {
       const foundOffer = availableOffers.find((offer) => offer.id === el);
+      if (!foundOffer) {
+        return '';
+      }
       const title =foundOffer.title;
       const price =foundOffer.price;
       return (`<li class="event__offer">
@@ -55,7 +58,7 @@ const createPointTemplate = (point, allOffers) => {
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">${type}   ${destination}</h3>
+                <h3 class="event__title">${type}   ${destination.name}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
                     <time class="event__start-time" datetime=${convertedToDatetimeDateFrom}>${startTime}</time>

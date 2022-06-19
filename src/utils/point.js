@@ -16,18 +16,16 @@ const pickHoursMinutesFromDate = (date) => {
 };
 
 const countDuration = (dateTo, dateFrom) => {
-  const date1 = dayjs(dateTo);
-  const date2 = dayjs(dateFrom);
-  const durationInDays = dayjs.duration(date1.diff(date2)).days();
-  const durationInHours = dayjs.duration(date1.diff(date2)).hours();
-  const durationInMinutes = dayjs.duration(date1.diff(date2)).minutes();
+  const durationInDays = dayjs.duration(dateTo.diff(dateFrom)).days();
+  const durationInHours = dayjs.duration(dateTo.diff(dateFrom)).hours();
+  const durationInMinutes = dayjs.duration(dateTo.diff(dateFrom)).minutes();
   let durationTotal = '';
   if (durationInDays) {
-    durationTotal = dayjs.duration(date1.diff(date2)).format('DD[D] HH[H] mm[M]');
+    durationTotal = dayjs.duration(dateTo.diff(dateFrom)).format('DD[D] HH[H] mm[M]');
   } else if (durationInHours) {
-    durationTotal = dayjs.duration(date1.diff(date2)).format('HH[H] mm[M]');
+    durationTotal = dayjs.duration(dateTo.diff(dateFrom)).format('HH[H] mm[M]');
   } else if (durationInMinutes) {
-    durationTotal = dayjs.duration(date1.diff(date2)).format('mm[M]');
+    durationTotal = dayjs.duration(dateTo.diff(dateFrom)).format('mm[M]');
   } else {
     durationTotal = '';
   }
@@ -36,7 +34,7 @@ const countDuration = (dateTo, dateFrom) => {
 
 const formatToDateAndTime = (date) => dayjs(date).format('DD[/]MM[/]YY HH:mm');
 
-const pickPhotos = (DestinationPhotos ,destionationForPhoto) => {
+const pickPhotos = (DestinationPhotos, destionationForPhoto) => {
   for (let i =0 ; i < DestinationPhotos.length; i++) {
     let chosenPhotos = [];
     if (DestinationPhotos[i].destination === destionationForPhoto){
@@ -66,14 +64,13 @@ const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 const getAvailableOffers =(chosenType, arr)=> {
   const offers = arr.find((offer)=> offer.type === chosenType);
   let availableOffers = null;
-  // if (offers) {
-  availableOffers = Object.values(offers.offers);
-  // }
-  // else {
-  //   availableOffers = [];
-  // }
+  if (offers) {
+    availableOffers = Object.values(offers.offers);
+  }
+  else {
+    availableOffers = [];
+  }
   return  availableOffers;
-
 };
 
 
@@ -81,30 +78,19 @@ const isPastPoint = (dateFrom, dateTo) => (dateFrom && dayjs().isAfter(dateFrom,
 const isFuturePoint =(dateFrom, dateTo) => (dateFrom && dayjs().isBefore(dateFrom, 'D')) && (dateTo && dayjs().isBefore(dateTo, 'D')) ;
 
 
-// const getWeightForNullDate = (dateA, dateB) => {
-//   if (dateA === null && dateB === null) {
-//     return 0;
-//   }
-
-//   if (dateA === null) {
-//     return 1;
-//   }
-
-//   if (dateB === null) {
-//     return -1;
-//   }
-
-//   return null;
-// };
-
 const sortPointDateDown = (pointA, pointB) => {
   const pointADuration= dayjs.duration(pointA.dateTo.diff(pointA.dateFrom));
   const pointBDuration= dayjs.duration(pointB.dateTo.diff(pointB.dateFrom));
   const durationDifference =  pointBDuration.subtract(pointADuration).$ms;
-  return (durationDifference);
+  return durationDifference;
 };
 
 const sortPointPriceDown = (pointA, pointB) => (pointB.basePrice-pointA.basePrice);
+
+const sortDaysUp = (pointA, pointB) => {
+  const isPointALaterPointB = pointA.dateFrom.subtract(pointB.dateFrom);
+  return isPointALaterPointB;
+};
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 const isMonthEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'M');
@@ -124,6 +110,7 @@ export {
   isFuturePoint,
   sortPointDateDown,
   sortPointPriceDown,
+  sortDaysUp,
   isDatesEqual,
   isMonthEqual
 };

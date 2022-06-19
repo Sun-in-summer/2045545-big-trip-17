@@ -1,20 +1,21 @@
 
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {
-  formatToDateAndTime, getAvailableOffers, pickPhotos
+  formatToDateAndTime, getAvailableOffers
 } from '../utils/point.js';
-import {DestinationPhotos, DestinationDescriptions} from '../mock/point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { defaultPoint } from '../const.js';
+import {defaultPoint} from '../const.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 
-const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton) => {
+const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelButton, destinations) => {
 
   const formattedDateFrom = formatToDateAndTime(point.dateFrom);
   const formattedDateTo = formatToDateAndTime(point.dateTo);
   const availableOffers = getAvailableOffers(point.type, allOffers);
+  const destinationNames = destinations.map((destination) => destination.name);
 
 
   const createOffersSection = ( ) => {
@@ -49,16 +50,16 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
 
   const createDestinationSection = () => {
-    const destinationDescription = DestinationDescriptions[point.destination];
-    const photos =pickPhotos(DestinationPhotos, point.destination);
-    const createPhotoWaysTemplate =(pickedPhotos) => {
+    const destinationDescription = (point['destination']['description'] !== null && point['destination']['description'] !== undefined) ? point['destination']['description'] : '' ;
+    const photos = point['destination']['photos'] !== null ? point['destination']['photos'] : [] ;
+    const createPhotoWaysTemplate =(destinationPhotos) => {
       let photoWays ='';
-      if (pickedPhotos.length === 0) {
+      if ( point['destination']['photos'] === undefined ||  Object.keys(point['destination']['photos']).length === 0 ) {
         return photoWays;
       }
       else {
-        for (const pickedPhoto of pickedPhotos){
-          photoWays +=  `<img class="event__photo" src=${pickedPhoto} alt="Event photo">`;
+        for (const photo of destinationPhotos){
+          photoWays +=  `<img class="event__photo" src="${photo['src']}" alt="${photo['description']}">`;
         }
       }
       return photoWays;
@@ -68,7 +69,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
 
     const createDestionationPhotoTemplate = (pickedPhotos) => {
-      if (pickedPhotos.length === 0) {
+      if (pickedPhotos === undefined  || pickedPhotos.length === 0 ) {
         return '';
       }
       else  {
@@ -83,6 +84,14 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
     const photosContainerTemplate =createDestionationPhotoTemplate(photos);
 
+    if (destinationDescription === '' && photosTemplate === '') {
+      return `<section class="event__section  event__section--destination visually-hidden">
+                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${destinationDescription}</p>
+                    ${photosContainerTemplate}
+                  </section>`;
+    }
+
     return (`<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${destinationDescription}</p>
@@ -92,23 +101,40 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
   const destinationSection = createDestinationSection();
 
-  const createDestinationsDatalist = () =>  Object.keys(DestinationDescriptions).map((el) => (`<option value=${el}></option>`)).join('');
+
+  const createDestinationsDatalist = () => (destinationNames.map((el) => (`<option value="${el}"></option>`)).join(''));
 
 
-  const destinationsDatalist = createDestinationsDatalist(); //
+  const destinationsDatalist = createDestinationsDatalist();
+
+  const checkCancelOrDeleteButtonName =(isCancel, isDeleting) => {
+    let buttonName = 'Cancel';
+    if ( isCancel&& !isDeleting ) {
+      return buttonName;
+    }
+    else if (!isCancel && isDeleting) {
+      buttonName = 'Deleting...';
+    }
+    else if (!isCancel && !isDeleting) {
+      buttonName = 'Delete';
+    }
+    return buttonName;
+  };
+
+  const cancelOrDeleteButtonName = checkCancelOrDeleteButtonName(isCancelButton, point.isDeleting);
 
 
-  return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
+  return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post" disabled>
                 <header class="event__header">
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
                       <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
                     </label>
-                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" ${point.isDisabled? 'disabled' :''} type="checkbox">
 
                     <div class="event__type-list">
-                      <fieldset class="event__type-group">
+                      <fieldset class="event__type-group" ${point.isDisabled? 'disabled' :''} >
                         <legend class="visually-hidden">Event type</legend>
 
                         <div class="event__type-item">
@@ -163,7 +189,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination}" list="destination-list-1" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(point.destination.name)}" list="destination-list-1" ${point.isDisabled? 'disabled' :''} required>
                     <datalist id="destination-list-1" >
                       ${destinationsDatalist}
                     </datalist>
@@ -171,7 +197,8 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class = "event__input  event__input--time"
+                    <input class = "event__input  event__input--time "
+                    ${point.isDisabled? 'disabled' :''}
                     id = "event-start-time-1"
                     type = "text"
                     name = "event-start-time"
@@ -186,31 +213,29 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}" required>
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(point.basePrice.toString())}" ${point.isDisabled? 'disabled' :''} required min="1">
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${isCancelButton? 'Cancel' : 'Delete'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${point.isDisabled? 'disabled' :''}>${point.isSaving? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset" ${point.isDisabled? 'disabled' :''} >${cancelOrDeleteButtonName} </button>
                 </header><section class="event__details">${offersSection} ${destinationSection}</section></form></li>` );
 
 };
 
 export default class PointEditFormView extends AbstractStatefulView {
-  #point  = null;
   #allOffers  = null;
-  #availableOffers = null;
   #newAvailableOffers= null;
   #pointPrice = null;
-  #oldChosenOffers = null;
   #datepickerFrom = null;
   #datepickerTo= null;
   #isCancelButton = false;
+  #destinations =null;
 
-
-  constructor(point = defaultPoint, allOffers, isCancelButton) {
+  constructor(point = defaultPoint, allOffers, isCancelButton, destinations) {
     super();
     this.#allOffers = allOffers;
     this.#isCancelButton = isCancelButton;
+    this.#destinations = destinations;
     this._state = PointEditFormView.convertPointToState(point);
     this.#setInnerHandlers();
     this.#setDatepickerFrom();
@@ -219,7 +244,7 @@ export default class PointEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPointEditFormTemplate(this._state, this.#allOffers, this.#isCancelButton);
+    return createPointEditFormTemplate(this._state, this.#allOffers, this.#isCancelButton, this.#destinations);
   }
 
   removeElement = () => {
@@ -264,7 +289,7 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   setCancelClickHandler = (callback) => {
     if (!this.#isCancelButton) {
-      return;  //
+      return;
     }
     this._callback.cancelClick = callback;
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#cancelClickHandler);
@@ -273,7 +298,7 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({ // проверять нужно ли так
+    this.updateElement({
       offers: this._state.offers,
     });
     this._callback.formSubmit(PointEditFormView.convertStateToPoint(this._state));
@@ -386,11 +411,18 @@ export default class PointEditFormView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    const destinationsNames = this.#destinations.map((destination) =>destination.name);
     const oldDestination = this._state.destination;
     evt.target.checked = true;
-    if (Object.keys(DestinationDescriptions).includes(evt.target.value)) {
+    const newDestination = this.#destinations.filter((destination) => destination.name === evt.target.value)[0];
+    if (destinationsNames.includes(evt.target.value)) {
       this.updateElement({
-        destination: evt.target.value,
+        destination: {...this._state.destination,
+          name: newDestination.name,
+          description: newDestination.description,
+          photos: newDestination.photos,
+
+        },
       });
     }
     else {
@@ -414,12 +446,21 @@ export default class PointEditFormView extends AbstractStatefulView {
   };
 
 
-  static convertPointToState = (point = defaultPoint) =>({...point, offers: point.offers.slice()});
+  static convertPointToState = (point = defaultPoint) =>({...point,
+    offers: point.offers.slice(),
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
+  });
 
 
   static convertStateToPoint =(state) =>{
     const point = {...state};
     delete point.availableOffers;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
     return point;
   };
 }
