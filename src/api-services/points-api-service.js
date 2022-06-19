@@ -46,9 +46,6 @@ export default class PointsApiService extends ApiService {
   };
 
   #adaptToServer = (point) =>{
-    console.log(typeof (point.dateFrom));
-
-
     const adaptedPoint = {...point,
       'date_from': point.dateFrom.toISOString() ,
       'date_to': point.dateTo.toISOString(),
@@ -63,7 +60,6 @@ export default class PointsApiService extends ApiService {
     delete adaptedPoint.basePrice;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint['destination']['photos'];
-    console.log(typeof (adaptedPoint.date_from));
     return adaptedPoint;
   };
 }

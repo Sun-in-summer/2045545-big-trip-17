@@ -119,8 +119,6 @@ export default class PointModel extends Observable {
     delete adaptedPoint['is_favorite'];
     delete adaptedPoint['destination']['pictures'];
 
-    console.log(adaptedPoint.dateFrom);
-
     return adaptedPoint;
   };
 
