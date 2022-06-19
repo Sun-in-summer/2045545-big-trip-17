@@ -213,7 +213,7 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.basePrice}" ${point.isDisabled? 'disabled' :''} required min="1">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(point.basePrice.toString())}" ${point.isDisabled? 'disabled' :''} required min="1">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit" ${point.isDisabled? 'disabled' :''}>${point.isSaving? 'Saving...' : 'Save'}</button>

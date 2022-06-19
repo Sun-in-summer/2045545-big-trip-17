@@ -2,7 +2,7 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { filter } from '../utils/filter.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
-import {sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
+import {sortDaysUp, sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
@@ -24,9 +24,7 @@ export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #noPointsComponent = null;
   #pointModel = null;
-  // #offersModel = null;
   #filterModel = null;
-  // #destinationsModel = null;
   #pointPresenter = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DEFAULT;
@@ -53,24 +51,26 @@ export default class BoardPresenter {
 
   get points () {
     this.#filterType =this.#filterModel.filter;
-    const points =this.#pointModel.points;
+    const points =this.#pointModel.getPointsAsync();
     const filteredPoints = filter[this.#filterType](points);
     switch (this.#currentSortType) {
       case SortType.PRICE_DOWN:
         return filteredPoints.slice().sort(sortPointPriceDown);
       case SortType.TIME_DOWN:
         return filteredPoints.slice().sort(sortPointDateDown);
+      case SortType.DEFAULT:
+        return filteredPoints.slice().sort(sortDaysUp);
     }
     return filteredPoints;
   }
 
   get destinations () {
-    const destinations = this.#pointModel.destinations;
+    const destinations = this.#pointModel.getDestinationsAsync();
     return destinations;
   }
 
   get offers () {
-    const offers = this.#pointModel.offers;
+    const offers = this.#pointModel.getOffersAsync();
     return offers;
   }
 

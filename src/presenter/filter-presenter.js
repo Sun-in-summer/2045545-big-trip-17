@@ -19,7 +19,7 @@ export default class FilterPresenter {
   }
 
   get filters() {
-    const points = this.#pointModel.points;
+    const points = this.#pointModel.getPointsAsync();
     const filters = Object.values(FilterType);
     return filters.map((type) => ({type, name: type, count: filter[type](points).length}));
   }

@@ -18,15 +18,15 @@ export default class PointModel extends Observable {
   }
 
 
-  get points() {
+  getPointsAsync() {
     return this.#points;
   }
 
-  get destinations () {
+  getDestinationsAsync () {
     return this.#destinations;
   }
 
-  get offers () {
+  getOffersAsync () {
     return this.#offers;
   }
 
@@ -34,9 +34,9 @@ export default class PointModel extends Observable {
   init = async () => {
 
     try {
-      const destinations = await this.#destinationsApiService.destinations;
-      const points = await this.#pointsApiService.points;
-      this.#offers = await this.#offersApiService.offers;
+      const destinations = await this.#destinationsApiService.getDestinationsAsync();
+      const points = await this.#pointsApiService.getPointsAsync();
+      this.#offers = await this.#offersApiService.getOffersAsync();
       this.#destinations = destinations.map(this.#adaptDestinationsToClient);
       this.#points = points.map(this.#adaptPointToClient);
     } catch(err) {
@@ -118,6 +118,8 @@ export default class PointModel extends Observable {
     delete adaptedPoint['base_price'];
     delete adaptedPoint['is_favorite'];
     delete adaptedPoint['destination']['pictures'];
+
+    console.log(adaptedPoint.dateFrom);
 
     return adaptedPoint;
   };

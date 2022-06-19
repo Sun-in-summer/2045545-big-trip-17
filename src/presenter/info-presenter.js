@@ -21,13 +21,13 @@ export default class InfoPresenter {
 
   get filteredPoints() {
     this.#filterType =this.#filterModel.filter;
-    const points =this.#pointModel.points;
+    const points =this.#pointModel.getPointsAsync();
     const filteredPoints = filter[this.#filterType](points);
     return filteredPoints;
   }
 
   get offers() {
-    const offers = this.#pointModel.offers;
+    const offers = this.#pointModel.getOffersAsync();
     return offers;
   }
 

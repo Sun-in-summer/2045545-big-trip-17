@@ -8,7 +8,7 @@ const Method = {
 };
 
 export default class PointsApiService extends ApiService {
-  get points() {
+  getPointsAsync() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
   }
@@ -46,6 +46,8 @@ export default class PointsApiService extends ApiService {
   };
 
   #adaptToServer = (point) =>{
+    console.log(typeof (point.dateFrom));
+
 
     const adaptedPoint = {...point,
       'date_from': point.dateFrom.toISOString() ,
@@ -61,6 +63,7 @@ export default class PointsApiService extends ApiService {
     delete adaptedPoint.basePrice;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint['destination']['photos'];
+    console.log(typeof (adaptedPoint.date_from));
     return adaptedPoint;
   };
 }
