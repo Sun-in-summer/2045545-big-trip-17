@@ -60,6 +60,7 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
   const tripValue = totalBasePricesSum +  totalExtraChargesAllPoints;
 
+
   return (`<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
               <h1 class="trip-info__title">${firstDestination} &mdash; ${middleDestination} &mdash; ${lastDestination}</h1>

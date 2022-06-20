@@ -1,6 +1,8 @@
 import {remove, render, replace, RenderPosition} from '../framework/render.js';
 import {filter} from '../utils/filter.js';
 import InfoView from '../view/info-view';
+import {SortType} from '../const.js';
+import {sortDaysUp, sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
 
 
 export default class InfoPresenter {
@@ -9,6 +11,7 @@ export default class InfoPresenter {
   #pointModel = null;
   #infoComponent = null;
   #filterType = null;
+  #currentSortType = SortType.DEFAULT;
 
 
   constructor(infoContainer, filterModel, pointModel) {
@@ -23,6 +26,14 @@ export default class InfoPresenter {
     this.#filterType =this.#filterModel.filter;
     const points =this.#pointModel.getPointsAsync();
     const filteredPoints = filter[this.#filterType](points);
+    switch (this.#currentSortType) {
+      case SortType.PRICE_DOWN:
+        return filteredPoints.slice().sort(sortPointPriceDown);
+      case SortType.TIME_DOWN:
+        return filteredPoints.slice().sort(sortPointDateDown);
+      case SortType.DEFAULT:
+        return filteredPoints.slice().sort(sortDaysUp);
+    }
     return filteredPoints;
   }
 
