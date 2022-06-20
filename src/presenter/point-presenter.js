@@ -9,7 +9,6 @@ const Mode = {
   EDITING: 'EDITING'
 };
 
-
 export default class PointPresenter {
   #point = null;
   #offers = null;
