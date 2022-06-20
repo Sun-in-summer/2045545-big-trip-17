@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Duration from 'dayjs/plugin/duration';
 dayjs.extend(Duration);
-// import { getRandomInteger } from './common.js';
 
 
 const humanizePointDate = (date) => dayjs(date).format('MMM D');
@@ -32,30 +31,6 @@ const countDuration = (dateTo, dateFrom) => {
 
 const formatToDateAndTime = (date) => dayjs(date).format('DD[/]MM[/]YY HH:mm');
 
-// const pickPhotos = (destinationPhotos, destionationForPhoto) => {
-//   for (let i =0 ; i < destinationPhotos.length; i++) {
-//     let chosenPhotos = [];
-//     if (destinationPhotos[i].destination === destionationForPhoto){
-//       chosenPhotos  = destinationPhotos[i].photos;
-//       return chosenPhotos;
-//     }
-//     else if ((i === destinationPhotos.length - 1) && (chosenPhotos = [])) {
-//       return chosenPhotos;
-//     }
-//   }
-// };
-
-
-// const generateNextDate =(date, negativeMinutesGap) =>{
-//   const maxMinutesGap = 7*24*60;
-//   const minutesGap = getRandomInteger(negativeMinutesGap, maxMinutesGap);
-//   return date.add(minutesGap, 'minutes');
-// };
-
-// const generateDateTime = (negativeMinutesGap) => {
-//   const date = dayjs();
-//   return generateNextDate(date, negativeMinutesGap);
-// };
 
 const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 

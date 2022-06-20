@@ -34,7 +34,7 @@ const handleNewPointFormClose = () => {
   newPointButton.disabled = false;
 };
 
-const handleNewPointButtonClick = () =>{
+const newPointButtonClickHandler = () =>{
   boardPresenter.createPoint(handleNewPointFormClose);
   newPointButton.disabled = true;
 };
@@ -43,7 +43,7 @@ const handleNewPointButtonClick = () =>{
 pointModel.init()
   .finally(()=>{
     newPointButton.disabled = false;
-    newPointButton.addEventListener('click', handleNewPointButtonClick);
+    newPointButton.addEventListener('click', newPointButtonClickHandler);
   });
 
 filterPresenter.init();

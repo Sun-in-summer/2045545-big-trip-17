@@ -1,8 +1,7 @@
 import {remove, render, replace, RenderPosition} from '../framework/render.js';
 import {filter} from '../utils/filter.js';
 import InfoView from '../view/info-view';
-import {SortType} from '../const.js';
-import {sortDaysUp, sortPointDateDown, sortPointPriceDown} from '../utils/point.js';
+import {sortDaysUp} from '../utils/point.js';
 
 
 export default class InfoPresenter {
@@ -11,7 +10,6 @@ export default class InfoPresenter {
   #pointModel = null;
   #infoComponent = null;
   #filterType = null;
-  #currentSortType = SortType.DEFAULT;
 
 
   constructor(infoContainer, filterModel, pointModel) {
@@ -22,19 +20,12 @@ export default class InfoPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  get filteredPoints() {
+  get sortedPoints() {
     this.#filterType =this.#filterModel.filter;
     const points =this.#pointModel.getPointsAsync();
     const filteredPoints = filter[this.#filterType](points);
-    switch (this.#currentSortType) {
-      case SortType.PRICE_DOWN:
-        return filteredPoints.slice().sort(sortPointPriceDown);
-      case SortType.TIME_DOWN:
-        return filteredPoints.slice().sort(sortPointDateDown);
-      case SortType.DEFAULT:
-        return filteredPoints.slice().sort(sortDaysUp);
-    }
-    return filteredPoints;
+    const sortedPoints = filteredPoints.slice().sort(sortDaysUp);
+    return sortedPoints;
   }
 
   get offers() {
@@ -44,14 +35,14 @@ export default class InfoPresenter {
 
 
   init = () => {
-    const filteredPoints = this.filteredPoints;
+    const sortedPoints = this.sortedPoints;
     const prevInfoComponent = this.#infoComponent;
-    this.#infoComponent = new InfoView(filteredPoints, this.offers);
+    this.#infoComponent = new InfoView(sortedPoints, this.offers);
     if (prevInfoComponent === null ){
       render(this.#infoComponent, this.#infoContainer, RenderPosition.AFTERBEGIN);
       return;
     }
-    if (filteredPoints.length === 0){
+    if (sortedPoints.length === 0){
       this.#infoComponent = new InfoView(null);
     }
     replace(this.#infoComponent, prevInfoComponent);

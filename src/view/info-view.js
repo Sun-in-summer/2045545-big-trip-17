@@ -3,17 +3,19 @@ import { getAvailableOffers, isMonthEqual } from '../utils/point.js';
 import dayjs from 'dayjs';
 
 
-const MAX_POINTS_QUANTITY_TO_DISPLAY_MIDDLE = 3;
+const POINTS_QUANTITY_TO_DISPLAY_MIDDLE = 3;
 const MIDDLE_OF_THREE = 1 ;
+const ONLY_POINT_IN_ROUTE =1 ;
+const TWO_POINTS_IN_ROUTE_ONLY =2;
 
-const createInfoTemplate = (filteredPoints, allOffers) => {
+const createInfoTemplate = (sortedPoints, allOffers) => {
 
-  if (filteredPoints === null || ((Object.keys(filteredPoints)).length === 0 )) {
+  if (sortedPoints === null || ((Object.keys(sortedPoints)).length === 0 )) {
     return '<section></section>';
   }
 
-  const firstPoint = filteredPoints[0];
-  const lastPoint = filteredPoints[filteredPoints.length-1];
+  const firstPoint = sortedPoints[0];
+  const lastPoint = sortedPoints[sortedPoints.length - 1];
   const firstDestination = firstPoint.destination.name;
   const firstDateFrom= dayjs(firstPoint.dateFrom).format('MMM DD');
   const lastDestination = lastPoint.destination.name;
@@ -23,7 +25,7 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
   const calculateAllExtraCharges = () => {
     const extraChargesAllPoints =[];
-    filteredPoints.map((point) => {
+    sortedPoints.map((point) => {
       const availableOffers = getAvailableOffers(point.type, allOffers);
       const extraChargesEachPoint = availableOffers.filter((item) => point.offers.includes(item.id)).map((item) => item.price);
       const totalSumEachPoint = extraChargesEachPoint.reduce((sum, current) => sum + current, 0);
@@ -40,7 +42,7 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
   }
 
 
-  const calculatePointsBasePrices = () => filteredPoints.map((point) => +(point.basePrice)).reduce((sum, current) => sum + current, 0);
+  const calculatePointsBasePrices = () => sortedPoints.map((point) => +(point.basePrice)).reduce((sum, current) => sum + current, 0);
 
 
   let totalBasePricesSum = calculatePointsBasePrices();
@@ -50,8 +52,8 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
 
   const findMiddleDestination = () => {
-    if (filteredPoints.length === MAX_POINTS_QUANTITY_TO_DISPLAY_MIDDLE) {
-      return  filteredPoints[MIDDLE_OF_THREE].destination.name;
+    if (sortedPoints.length === POINTS_QUANTITY_TO_DISPLAY_MIDDLE) {
+      return  sortedPoints[MIDDLE_OF_THREE].destination.name;
     }
     return '...';
   };
@@ -60,10 +62,22 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
   const tripValue = totalBasePricesSum +  totalExtraChargesAllPoints;
 
+  const getMiddleAndLastPointsTemplate = () =>{
+    if (sortedPoints.length === ONLY_POINT_IN_ROUTE) {
+      return '';
+    }
+    else if (sortedPoints.length === TWO_POINTS_IN_ROUTE_ONLY ) {
+      return ` &mdash; ${lastDestination}`;
+    }
+    return `&mdash; ${middleDestination} &mdash; ${lastDestination}`;
+  };
+
+  const middleAndLastPoints = getMiddleAndLastPointsTemplate();
+
 
   return (`<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
-              <h1 class="trip-info__title">${firstDestination} &mdash; ${middleDestination} &mdash; ${lastDestination}</h1>
+              <h1 class="trip-info__title">${firstDestination} ${middleAndLastPoints} </h1>
 
               <p class="trip-info__dates">${firstDateFrom}&nbsp;&mdash;&nbsp;${lastDateTo}</p>
               </div>
@@ -77,16 +91,16 @@ const createInfoTemplate = (filteredPoints, allOffers) => {
 
 export default class InfoView extends AbstractView{
 
-  #filteredPoints = null;
+  #sortedPoints = null;
   #allOffers = null;
 
-  constructor (filteredPoints, allOffers) {
+  constructor (sortedPoints, allOffers) {
     super();
-    this.#filteredPoints = filteredPoints;
+    this.#sortedPoints = sortedPoints;
     this.#allOffers = allOffers;
   }
 
   get template() {
-    return createInfoTemplate(this.#filteredPoints, this.#allOffers);
+    return createInfoTemplate(this.#sortedPoints, this.#allOffers);
   }
 }
