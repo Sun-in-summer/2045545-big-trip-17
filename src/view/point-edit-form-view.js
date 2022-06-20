@@ -72,13 +72,11 @@ const createPointEditFormTemplate = (point = defaultPoint, allOffers, isCancelBu
       if (pickedPhotos === undefined  || pickedPhotos.length === 0 ) {
         return '';
       }
-      else  {
-        return (`<div class="event__photos-container">
+      return (`<div class="event__photos-container">
                       <div class="event__photos-tape">
                         ${photosTemplate}
                      </div>
     </div> `);
-      }
     };
 
 

@@ -2,9 +2,7 @@ import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import InfoPresenter from './presenter/info-presenter.js';
 import PointModel from './model/point-model.js';
-// import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
-// import DestinationsModel from './model/destinations-model.js';
 import PointsApiService from './api-services/points-api-service.js';
 import DestinationsApiService from './api-services/destinations-api-service.js';
 import OffersApiService from './api-services/offers-api-services.js';
@@ -36,7 +34,7 @@ const handleNewPointFormClose = () => {
   newPointButton.disabled = false;
 };
 
-const handleNewPointButtonClick = () =>{
+const newPointButtonClickHandler = () =>{
   boardPresenter.createPoint(handleNewPointFormClose);
   newPointButton.disabled = true;
 };
@@ -45,7 +43,7 @@ const handleNewPointButtonClick = () =>{
 pointModel.init()
   .finally(()=>{
     newPointButton.disabled = false;
-    newPointButton.addEventListener('click', handleNewPointButtonClick);
+    newPointButton.addEventListener('click', newPointButtonClickHandler);
   });
 
 filterPresenter.init();

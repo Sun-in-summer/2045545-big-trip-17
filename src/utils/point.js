@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Duration from 'dayjs/plugin/duration';
 dayjs.extend(Duration);
-import { getRandomInteger } from './common.js';
 
 
 const humanizePointDate = (date) => dayjs(date).format('MMM D');
@@ -10,9 +9,7 @@ const pickHoursMinutesFromDate = (date) => {
   if (date === null) {
     return  dayjs().format('HH:mm');
   }
-  else {
-    return dayjs(date).format('HH:mm');
-  }
+  return dayjs(date).format('HH:mm');
 };
 
 const countDuration = (dateTo, dateFrom) => {
@@ -34,35 +31,11 @@ const countDuration = (dateTo, dateFrom) => {
 
 const formatToDateAndTime = (date) => dayjs(date).format('DD[/]MM[/]YY HH:mm');
 
-const pickPhotos = (DestinationPhotos, destionationForPhoto) => {
-  for (let i =0 ; i < DestinationPhotos.length; i++) {
-    let chosenPhotos = [];
-    if (DestinationPhotos[i].destination === destionationForPhoto){
-      chosenPhotos  = DestinationPhotos[i].photos;
-      return chosenPhotos;
-    }
-    else if ((i === DestinationPhotos.length - 1) && (chosenPhotos = [])) {
-      return chosenPhotos;
-    }
-  }
-};
-
-
-const generateNextDate =(date, negativeMinutesGap) =>{
-  const maxMinutesGap = 7*24*60;
-  const minutesGap = getRandomInteger(negativeMinutesGap, maxMinutesGap);
-  return date.add(minutesGap, 'minutes');
-};
-
-const generateDateTime = (negativeMinutesGap) => {
-  const date = dayjs();
-  return generateNextDate(date, negativeMinutesGap);
-};
 
 const convertToDatetimeFormat =(date) => dayjs(date).format('DD-MM-YY');
 
-const getAvailableOffers =(chosenType, arr)=> {
-  const offers = arr.find((offer)=> offer.type === chosenType);
+const getAvailableOffers =(chosenType, allOffers)=> {
+  const offers = allOffers.find((offer)=> offer.type === chosenType);
   let availableOffers = null;
   if (offers) {
     availableOffers = Object.values(offers.offers);
@@ -101,9 +74,6 @@ export {
   pickHoursMinutesFromDate,
   countDuration,
   formatToDateAndTime,
-  pickPhotos,
-  generateDateTime,
-  generateNextDate,
   convertToDatetimeFormat,
   getAvailableOffers,
   isPastPoint,
